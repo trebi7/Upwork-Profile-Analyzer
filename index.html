@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upwork Job Screening — Data / BI / Analytics</title>
+<meta name="description" content="Get an Upwork job assessed before spending your connects: compatibility score, red flags, contract strategy and a ready-to-paste cover letter, based on your CV.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root{
+    --navy:#0D3B66; --navy-deep:#0A2C4E; --accent:#2A78D6; --amber:#B5590B;
+    --paper:#F5F8FC; --surface:#FFFFFF; --ink:#14202E; --muted:#5B6B7C;
+    --green:#1B7A3D; --border:#E1E8F0; --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:16px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:900px;margin:0 auto;padding:22px 20px 32px;}
+  .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:12px;flex-wrap:wrap;}
+  .brand{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;color:var(--navy);}
+  .brand .x{color:var(--accent);}
+  .top-right{display:flex;align-items:center;gap:14px;}
+  .top small{color:var(--muted);font-size:12.5px;}
+
+  .lang-switch{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;font-family:'IBM Plex Mono',monospace;font-size:11.5px;}
+  .lang-switch button{border:none;background:#fff;color:var(--muted);padding:6px 12px;cursor:pointer;font-family:inherit;font-size:inherit;}
+  .lang-switch button.active{background:var(--navy);color:#fff;}
+
+  .stage{
+    background:var(--surface); border:1px solid var(--border); border-radius:20px;
+    padding:clamp(20px,3vw,30px); margin-top:16px; position:relative; overflow:hidden;
+    box-shadow:0 1px 3px rgba(13,59,102,.06);
+  }
+
+  .stepper{display:flex;align-items:center;gap:10px;margin-bottom:18px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);}
+  .stepper .line{flex:1;height:1px;background:var(--border);}
+  .stepper .step{white-space:nowrap;}
+  .stepper .step.active{color:var(--navy);font-weight:600;}
+  .stepper .step.done{color:var(--green);}
+
+  .eyebrow{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;
+    font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--green);
+    background:rgba(27,122,61,.08);padding:4px 10px;border-radius:999px;margin-bottom:10px;}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(23px,3vw,29px);
+    line-height:1.15;color:var(--navy);margin:0 0 8px;}
+  .sub{color:var(--muted);font-size:14.5px;max-width:62ch;margin:0 0 18px;}
+
+  .plans{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px;}
+  @media (max-width:600px){.plans{grid-template-columns:1fr;}}
+  .plan-card{border:1px solid var(--border);border-radius:var(--radius);padding:17px 18px;background:var(--paper);display:flex;flex-direction:column;}
+  .plan-card .ptag{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:6px;}
+  .plan-card h3{font-family:'Space Grotesk',sans-serif;font-size:17px;color:var(--navy);margin:0 0 3px;}
+  .plan-card .price{font-size:15px;color:var(--navy);font-weight:600;margin:0 0 7px;}
+  .plan-card .desc{font-size:13px;color:var(--muted);line-height:1.5;margin:0 0 13px;flex:1;}
+  .plan-card button.btn{width:100%;justify-content:center;background:var(--accent);color:#fff;font-size:14px;
+    padding:9px 16px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-family:inherit;}
+  .plan-card button.btn:hover{background:var(--navy);}
+
+  .qtag{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:16px;}
+  .qtag.two{color:var(--amber);}
+
+  .selected-plan-recap{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:26px;font-size:13.5px;}
+  .selected-plan-recap b{color:var(--navy);}
+  .change-plan-btn{background:none;border:none;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;font-family:inherit;padding:0;}
+
+  .qgrid{display:grid;gap:18px;margin-bottom:26px;}
+  .qgrid label{display:block;font-size:13.5px;font-weight:600;color:var(--navy);margin-bottom:6px;}
+  .qgrid .field-hint{font-size:12.5px;color:var(--muted);margin:-3px 0 7px;font-weight:400;}
+  .qgrid .email-warn{background:rgba(181,89,11,.07);border-left:3px solid var(--amber);color:var(--amber);
+    padding:8px 10px;border-radius:0 6px 6px 0;margin:0 0 8px;}
+  .qgrid input[type=text], .qgrid input[type=url], .qgrid input[type=email], .qgrid textarea{
+    width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--border);
+    font-size:14.5px;font-family:'Inter',sans-serif;background:#fff;color:var(--ink);
+  }
+  .qgrid textarea{resize:vertical;min-height:130px;}
+  .qgrid input:focus-visible, .qgrid textarea:focus-visible{outline:3px solid var(--accent);outline-offset:1px;}
+  .req{color:var(--amber);}
+
+  .file-drop{
+    border:1px dashed var(--border);border-radius:var(--radius);
+    padding:18px;text-align:center;background:var(--paper);cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .file-drop:hover{border-color:var(--accent);}
+  .file-drop.has-file{border-color:var(--green);background:rgba(27,122,61,.06);}
+  .file-drop input{display:none;}
+  .file-drop-label{font-size:13.5px;color:var(--muted);}
+  .file-drop.has-file .file-drop-label{color:var(--green);font-weight:600;}
+
+  .qform-actions{margin-top:8px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+
+  .btn{font-family:'Inter',sans-serif;font-weight:600;font-size:15px;border:none;cursor:pointer;
+    border-radius:10px;padding:14px 30px;display:inline-flex;align-items:center;gap:8px;
+    text-decoration:none;transition:transform .15s ease,background .15s ease;}
+  .btn:hover{transform:translateY(-1px);}
+  .btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+  .btn-primary{background:var(--navy);color:#fff;}
+  .btn-primary:hover{background:var(--navy-deep);}
+  .btn-primary:disabled{background:var(--muted);cursor:progress;transform:none;}
+  .btn-ghost-fallback{background:transparent;color:var(--muted);font-size:12.5px;font-weight:500;padding:6px 4px;
+    text-decoration:underline;border:none;cursor:pointer;font-family:inherit;}
+  .btn-ghost-fallback:hover{color:var(--navy);}
+
+  .result-note{border-radius:10px;padding:14px 16px;font-size:13.8px;line-height:1.55;margin-top:18px;display:none;}
+  .result-note.show{display:block;}
+  .result-note.ok{background:rgba(27,122,61,.08);border:1px solid var(--green);color:var(--green);}
+  .result-note.err{background:rgba(181,89,11,.08);border:1px solid var(--amber);color:var(--amber);}
+  .result-note.pending{background:rgba(42,120,214,.08);border:1px solid var(--accent);color:var(--accent);}
+
+  .spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(42,120,214,.3);
+    border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:-2px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .result-box{border:1px solid var(--border);border-radius:var(--radius);padding:26px;background:var(--paper);text-align:center;}
+  .result-box .file-title{font-family:'Space Grotesk',sans-serif;font-size:18px;color:var(--navy);font-weight:600;margin:0 0 6px;word-break:break-word;}
+  .result-box .file-meta{font-size:12.5px;color:var(--muted);margin:0 0 20px;}
+  .payment-area{margin-top:22px;padding-top:22px;border-top:1px solid var(--border);display:none;}
+  .payment-area.show{display:block;}
+  .payment-area a.btn{background:var(--accent);color:#fff;margin-bottom:12px;}
+  .payment-area a.btn:hover{background:var(--navy);}
+
+  .sample{margin-top:14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);overflow:hidden;}
+  .sample summary{cursor:pointer;padding:13px 18px;font-family:'Space Grotesk',sans-serif;font-weight:600;
+    font-size:15px;color:var(--navy);list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .sample summary::-webkit-details-marker{display:none;}
+  .sample summary::after{content:'+';font-size:20px;color:var(--accent);font-weight:400;}
+  .sample[open] summary::after{content:'\2212';}
+  .sample summary:hover{background:var(--paper);}
+  .sample-body{padding:0 20px 22px;border-top:1px solid var(--border);}
+  .sample-intro{font-size:13.5px;color:var(--muted);line-height:1.6;margin:16px 0 18px;}
+  .sample-doc{border:1px solid var(--border);border-radius:10px;background:var(--paper);padding:20px;
+    max-height:460px;overflow-y:auto;font-size:13.5px;line-height:1.6;color:var(--ink);}
+  .sample-doc h4{font-family:'Space Grotesk',sans-serif;color:var(--navy);font-size:15px;
+    margin:22px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--navy);}
+  .sample-doc h4:first-child{margin-top:0;}
+  .sample-doc h5{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;
+    text-transform:uppercase;margin:14px 0 5px;}
+  .sample-doc ul{margin:0 0 12px;padding-left:18px;}
+  .sample-doc li{margin-bottom:5px;}
+  .sample-doc p{margin:0 0 6px;}
+  .sample-scores{display:flex;gap:8px;margin:10px 0 12px;flex-wrap:wrap;}
+  .sample-score{flex:1;min-width:140px;text-align:center;border-radius:8px;padding:12px;}
+  .sample-score b{display:block;font-size:22px;line-height:1.1;}
+  .sample-score span{font-size:11px;}
+  .sample-table{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0 10px;}
+  .sample-table th{background:var(--navy);color:#fff;text-align:left;padding:8px 7px;font-size:11px;font-weight:600;}
+  .sample-table td{padding:8px 7px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.45;}
+  .sample-table tr:nth-child(even) td{background:#fff;}
+  .sample-table tr:nth-child(odd) td{background:var(--paper);}
+  .sample-table .amt{text-align:right;white-space:nowrap;font-weight:600;}
+  .sample-badge{display:inline-block;background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;
+    padding:5px 12px;border-radius:999px;margin:0 0 8px;}
+  .sample-rate{background:rgba(181,89,11,.08);border-left:4px solid var(--amber);border-radius:0 8px 8px 0;
+    padding:12px 14px;margin:0 0 12px;font-size:13px;line-height:1.6;}
+  .sample-total{text-align:right;font-weight:700;color:var(--navy);font-size:13.5px;margin:0 0 4px;}
+  .sample-letter{background:#fff;border:1px solid var(--accent);border-left:4px solid var(--accent);
+    border-radius:8px;padding:14px;white-space:pre-wrap;font-size:13px;line-height:1.7;}
+  .sample-cta{margin-top:16px;font-size:13.5px;color:var(--navy);font-weight:600;}
+  footer.foot{text-align:center;color:var(--muted);font-size:12.5px;margin-top:12px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top">
+    <span class="brand">Upwork <span class="x">×</span> Data/BI</span>
+    <div class="top-right">
+      <small data-i18n="tagline">Zéro connect gaspillé</small>
+      <div class="lang-switch">
+        <button type="button" id="lang-fr">FR</button>
+        <button type="button" id="lang-en" class="active">EN</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="stage">
+    <div class="stepper">
+      <span class="step active" id="stepper-1" data-i18n="step1">01 — Formule</span>
+      <span class="line"></span>
+      <span class="step" id="stepper-2" data-i18n="step2">02 — Profil et offre</span>
+      <span class="line"></span>
+      <span class="step" id="stepper-3" data-i18n="step3">03 — Paiement et résultat</span>
+    </div>
+
+    <!-- ETAPE 1 : choix de la formule -->
+    <section id="step-plans">
+      <span class="eyebrow" data-i18n="eyebrow">● Réservé aux profils data / BI / analytics</span>
+      <h1 data-i18n="h1">On regarde l'offre avant que tu ne postules.</h1>
+      <p class="sub" data-i18n="sub">Choisis ta formule. Tu ne paies qu'au téléchargement, une fois ton analyse prête.</p>
+
+      <div class="plans">
+        <div class="plan-card">
+          <span class="ptag" data-i18n="planTaskTag">À la tâche</span>
+          <h3 data-i18n="planTaskTitle">Analyse ponctuelle</h3>
+          <p class="price" data-i18n="planTaskPrice">3 000 FCFA</p>
+          <p class="desc" data-i18n="planTaskDesc">Une offre analysée : double score, signaux d'alerte, stratégie de contrat avec jalons, et lettre de motivation prête à envoyer.</p>
+          <button type="button" class="btn" data-plan="tache" data-i18n="planChooseBtn">Choisir cette formule</button>
+        </div>
+        <div class="plan-card">
+          <span class="ptag" data-i18n="planSubTag">Abonnement</span>
+          <h3 data-i18n="planSubTitle">Accès mensuel</h3>
+          <p class="price" data-i18n="planSubPrice">5 000 FCFA</p>
+          <p class="desc" data-i18n="planSubDesc">Analyses illimitées pendant 30 jours. Pour ceux qui postulent régulièrement et veulent trier avant de dépenser un connect.</p>
+          <button type="button" class="btn" data-plan="abonnement" data-i18n="planChooseBtn">Choisir cette formule</button>
+        </div>
+      </div>
+
+      <details class="sample" id="sample-block">
+        <summary data-i18n="sampleTitle">Voir un exemple d'analyse complète (celle que je me fais à moi-même)</summary>
+        <div class="sample-body">
+          <p class="sample-intro" data-i18n="sampleIntro">Voici une analyse réelle, produite par ce même service sur une offre Power BI à laquelle j'ai postulé. C'est exactement le document que vous recevez, en Word et en HTML. Rien n'a été retouché.</p>
+          <div class="sample-doc" id="sample-doc"></div>
+          <p class="sample-cta" data-i18n="sampleCta">C'est ce niveau de détail que vous recevez pour chaque offre analysée.</p>
+        </div>
+      </details>
+
+    </section>
+
+    <!-- ETAPE 2 : profil + offre -->
+    <section id="step-form" style="display:none;">
+      <div class="selected-plan-recap">
+        <span><span data-i18n="recapPrefix">Formule choisie : </span><b id="selected-plan-label"></b></span>
+        <button type="button" class="change-plan-btn" id="change-plan-btn" data-i18n="changePlanBtn">Changer de formule</button>
+      </div>
+
+      <form id="screening-form" novalidate>
+        <span class="qtag" data-i18n="profileTag">◆ Votre profil</span>
+        <div class="qgrid">
+          <div>
+            <label for="freelance_name" data-i18n="labelName">Nom <span class="req">*</span></label>
+            <input type="text" id="freelance_name" name="freelance_name" required autocomplete="name">
+          </div>
+
+          <div>
+            <label for="contact_email" data-i18n="labelEmail">Adresse email <span class="req">*</span></label>
+            <p class="field-hint email-warn" data-i18n="emailWarn">Important : utilise sur Chariow la MÊME adresse email que celle saisie ci-dessus. C'est elle qui nous sert à retrouver ton paiement.</p>
+            <input type="email" id="contact_email" name="contact_email" required placeholder="vous@exemple.com" autocomplete="email">
+          </div>
+
+          <div>
+            <label for="cv_file" data-i18n="labelCv">CV (PDF uniquement) <span class="req">*</span></label>
+            <p class="field-hint" data-i18n="cvHint">Votre profil — compétences, expérience, langues — est extrait automatiquement de ce CV.</p>
+            <div class="file-drop" id="file-drop">
+              <input type="file" id="cv_file" name="cv_file" accept="application/pdf,.pdf" required>
+              <div class="file-drop-label" id="file-drop-label" data-i18n="fileDropLabel">Cliquez ou déposez votre CV ici (.pdf)</div>
+            </div>
+          </div>
+        </div>
+
+        <span class="qtag two" data-i18n="jobTag">◆ L'offre à analyser</span>
+        <div class="qgrid">
+          <div>
+            <label for="job_title" data-i18n="labelJobTitle">Titre de l'offre <span class="req">*</span></label>
+            <input type="text" id="job_title" name="job_title" required maxlength="200">
+          </div>
+          <div>
+            <label for="job_url" data-i18n="labelJobUrl">Lien Upwork (optionnel)</label>
+            <input type="url" id="job_url" name="job_url" placeholder="https://www.upwork.com/jobs/...">
+          </div>
+          <div>
+            <label for="job_text" data-i18n="labelJobText">Texte complet de l'offre <span class="req">*</span></label>
+            <p class="field-hint" data-i18n="jobTextHint">Description, budget, compétences demandées, infos client si visibles.</p>
+            <textarea id="job_text" name="job_text" required maxlength="20000"></textarea>
+          </div>
+        </div>
+
+        <div class="qform-actions">
+          <button type="submit" class="btn btn-primary" id="submit-btn" data-i18n="submitBtn">Envoyer pour analyse →</button>
+        </div>
+        <div id="status" class="result-note" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <!-- ETAPE 3 : résultat + téléchargement conditionné au paiement -->
+    <section id="step-result" style="display:none;">
+      <div class="result-box">
+        <p class="file-title" id="result-title"></p>
+        <p class="file-meta" id="result-meta" data-i18n="resultMeta">Formats : Word (.docx) et HTML</p>
+        <button type="button" class="btn btn-primary" id="reveal-payment-btn" data-i18n="revealPaymentBtn">Télécharger mes résultats →</button>
+
+        <div class="payment-area" id="payment-area">
+          <p class="sub" style="margin:0 0 14px;" data-i18n="payToDownload">Le règlement se fait sur Chariow, dans un nouvel onglet. Une fois payé, tu es redirigé automatiquement et le téléchargement démarre ici tout seul.</p>
+          <a class="btn" id="chariow-pay-link" href="#" target="_blank" rel="noopener" data-i18n="payNowBtn">Payer sur Chariow →</a>
+          <div id="waiting-note" class="result-note pending" role="status" aria-live="polite"></div>
+          <br>
+          <button type="button" class="btn-ghost-fallback" id="confirm-paid-btn" data-i18n="confirmPaidBtn">Déjà payé et rien ne se passe ? Télécharger manuellement</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+  <footer class="foot">Irié Armand Davy TRE BI  •  Data Analyst</footer>
+</div>
+
+<script>
+/* ===================================================================
+   CONFIGURATION
+   =================================================================== */
+const WEBHOOK_URL = "https://davy77.app.n8n.cloud/webhook/dab42738-055e-428a-95a9-999aaa86caac/upwork-screening-intake";
+const CHARIOW_LINKS = {
+  tache: "https://ymkecnxg.mychariow.com/prd_35s5kk1w",
+  abonnement: "https://ymkecnxg.mychariow.com/prd_gqsgg9nk"
+};
+// Limite volontairement basse : le PDF est encode en base64 (+33% de volume)
+// et transite dans le corps de la requete. 8 Mo couvre tout CV normal.
+const MAX_CV_BYTES = 8 * 1024 * 1024;
+
+const LS_PAID_PREFIX = 'chariow_paid_';
+const LS_PENDING_REQUEST = 'upwork_pending_request';
+
+/* ===================================================================
+   TRADUCTIONS
+   =================================================================== */
+const translations = {
+  fr: {
+    tagline: "Zéro connect gaspillé",
+    sampleTitle: "Voir un exemple d'analyse complète (celle que je me fais à moi-même)",
+    sampleIntro: "Voici une analyse réelle, produite par ce même service sur une offre Power BI à laquelle j'ai postulé. C'est exactement le document que vous recevez, en Word et en HTML. Rien n'a été retouché.", sampleCta: "C'est ce niveau de détail que vous recevez pour chaque offre analysée.",
+    step1: "01 — Formule", step2: "02 — Profil et offre", step3: "03 — Paiement et résultat",
+    eyebrow: "● Réservé aux profils data / BI / analytics",
+    h1: "On regarde l'offre avant que tu ne postules.",
+    sub: "Choisis ta formule. Tu ne paies qu'au téléchargement, une fois ton analyse prête.",
+    planTaskTag: "À la tâche", planTaskTitle: "Analyse ponctuelle", planTaskPrice: "3 000 FCFA",
+    planTaskDesc: "Une offre analysée : double score, signaux d'alerte, stratégie de contrat avec jalons, et lettre de motivation prête à envoyer.",
+    planSubTag: "Abonnement", planSubTitle: "Accès mensuel", planSubPrice: "5 000 FCFA",
+    planSubDesc: "Analyses illimitées pendant 30 jours. Pour ceux qui postulent régulièrement et veulent trier avant de dépenser un connect.",
+    planChooseBtn: "Choisir cette formule",
+    recapPrefix: "Formule choisie : ",
+    changePlanBtn: "Changer de formule",
+    profileTag: "◆ Votre profil",
+    labelName: 'Nom <span class="req">*</span>',
+    labelEmail: 'Adresse email <span class="req">*</span>',
+    labelCv: 'CV (PDF uniquement) <span class="req">*</span>',
+    cvHint: "Votre profil — compétences, expérience, langues — est extrait automatiquement de ce CV.",
+    fileDropLabel: "Cliquez ou déposez votre CV ici (.pdf)",
+    jobTag: "◆ L'offre à analyser",
+    labelJobTitle: 'Titre de l\'offre <span class="req">*</span>',
+    labelJobUrl: "Lien Upwork (optionnel)",
+    labelJobText: 'Texte complet de l\'offre <span class="req">*</span>',
+    jobTextHint: "Description, budget, compétences demandées, infos client si visibles.",
+    submitBtn: "Envoyer pour analyse →",
+    submitBtnBusy: "Analyse en cours…",
+    resultMeta: "Formats : Word (.docx) et HTML",
+    revealPaymentBtn: "Télécharger mes résultats →",
+    payToDownload: "Le règlement se fait sur Chariow, dans un nouvel onglet. Une fois payé, reviens ici : ton analyse se lance automatiquement, puis le téléchargement démarre.",
+    analysisRunning: "Paiement confirmé. Analyse en cours (jusqu'à une minute) — ne ferme pas cette page.",
+    readyTitle: "Analyse prête à débloquer",
+    readyMeta: "Formats livrés : Word (.docx) et HTML",
+    emailWarn: "Important : utilise sur Chariow la MÊME adresse email que celle saisie ci-dessus. C'est elle qui nous sert à retrouver ton paiement.",
+    errNoPayment: "Aucun paiement valide trouvé pour cette adresse.",
+    retryPayment: "Réessayer la vérification",
+    lostRequest: "Ta demande n'a pas pu être retrouvée. Reprends le formulaire depuis le début — ton paiement reste valable.",
+    subDaysLeft: " jour(s) restant(s) sur ton abonnement.",
+    payNowBtn: "Payer sur Chariow →",
+    confirmPaidBtn: "Déjà payé et rien ne se passe ? Télécharger manuellement",
+    waitingNote: "En attente de la confirmation du paiement…",
+    downloadDone: "Téléchargement lancé. Vérifie le dossier de téléchargements de ton navigateur.",
+    docxFailed: "Le fichier HTML a été téléchargé. La version Word n'a pas pu être générée sur ce navigateur — ouvre le HTML puis enregistre-le en Word depuis ton traitement de texte.",
+    resultTitlePrefix: "Analyse — ",
+    errNoName: "Merci d'indiquer votre nom.",
+    errNoEmail: "Merci d'indiquer une adresse email valide.",
+    errNoJobTitle: "Merci d'indiquer le titre de l'offre.",
+    errNoJobText: "Merci de coller le texte de l'offre à analyser.",
+    errShortJobText: "Le texte de l'offre est trop court pour être analysé sérieusement (au moins 100 caractères).",
+    statusMissingCv: "Merci de charger votre CV au format PDF.",
+    statusNotPdf: "Le CV doit être un fichier PDF.",
+    statusTooBig: "Le CV dépasse 8 Mo. Merci de fournir une version allégée.",
+    statusSending: "Analyse en cours (elle peut prendre jusqu'à une minute) — ne ferme pas cette page.",
+    statusNetworkErr: "Impossible de joindre le service d'analyse. Vérifie ta connexion et réessaie.",
+    statusServerErr: "Le service d'analyse a rencontré une erreur. Réessaie dans quelques minutes.",
+    planTacheLabel: "À la tâche — 3 000 FCFA",
+    planAbonnementLabel: "Abonnement — 5 000 FCFA",
+    paidPageTitle: "Paiement confirmé",
+    paidPageBody: "Tu peux fermer cet onglet et retourner sur celui où tu as lancé ton analyse — le téléchargement va démarrer automatiquement.",
+    paidPageBodySameTab: "Ton téléchargement démarre dans un instant…"
+  },
+  en: {
+    tagline: "No wasted connects",
+    sampleTitle: "See a full sample analysis (the one I run on myself)",
+    sampleIntro: "This is a real analysis, produced by this same service on a Power BI job I applied to. It is exactly the document you receive, in Word and HTML. Nothing has been edited.", sampleCta: "This is the level of detail you get for every job analyzed.",
+    step1: "01 — Plan", step2: "02 — Profile and job", step3: "03 — Payment and result",
+    eyebrow: "● For data / BI / analytics freelancers only",
+    h1: "We check the job before you apply.",
+    sub: "Choose your plan. You only pay at download, once your analysis is ready.",
+    planTaskTag: "Per task", planTaskTitle: "One-time analysis", planTaskPrice: "$5",
+    planTaskDesc: "One job analyzed: dual score, red flags, contract strategy with milestones, and a ready-to-send cover letter.",
+    planSubTag: "Subscription", planSubTitle: "Monthly access", planSubPrice: "$9",
+    planSubDesc: "Unlimited analyses for 30 days. For freelancers who apply often and want to filter before spending a connect.",
+    planChooseBtn: "Choose this plan",
+    recapPrefix: "Selected plan: ",
+    changePlanBtn: "Change plan",
+    profileTag: "◆ Your profile",
+    labelName: 'Name <span class="req">*</span>',
+    labelEmail: 'Email address <span class="req">*</span>',
+    labelCv: 'CV (PDF only) <span class="req">*</span>',
+    cvHint: "Your profile — skills, experience, languages — is automatically extracted from this CV.",
+    fileDropLabel: "Click or drop your CV here (.pdf)",
+    jobTag: "◆ The job to analyze",
+    labelJobTitle: 'Job title <span class="req">*</span>',
+    labelJobUrl: "Upwork link (optional)",
+    labelJobText: 'Full job text <span class="req">*</span>',
+    jobTextHint: "Description, budget, required skills, client info if visible.",
+    submitBtn: "Send for analysis →",
+    submitBtnBusy: "Analyzing…",
+    resultMeta: "Formats: Word (.docx) and HTML",
+    revealPaymentBtn: "Download my results →",
+    payToDownload: "Payment happens on Chariow, in a new tab. Once paid, come back here: your analysis runs automatically, then the download starts.",
+    analysisRunning: "Payment confirmed. Analyzing (up to a minute) — don't close this page.",
+    readyTitle: "Analysis ready to unlock",
+    readyMeta: "Delivered formats: Word (.docx) and HTML",
+    emailWarn: "Important: use the SAME email address on Chariow as the one entered above. That is how we find your payment.",
+    errNoPayment: "No valid payment found for this address.",
+    retryPayment: "Retry verification",
+    lostRequest: "Your request could not be recovered. Please start the form again — your payment is still valid.",
+    subDaysLeft: " day(s) left on your subscription.",
+    payNowBtn: "Pay on Chariow →",
+    confirmPaidBtn: "Already paid and nothing happening? Download manually",
+    waitingNote: "Waiting for payment confirmation…",
+    downloadDone: "Download started. Check your browser's downloads folder.",
+    docxFailed: "The HTML file was downloaded. The Word version could not be generated on this browser — open the HTML and save it as Word from your word processor.",
+    resultTitlePrefix: "Analysis — ",
+    errNoName: "Please enter your name.",
+    errNoEmail: "Please enter a valid email address.",
+    errNoJobTitle: "Please enter the job title.",
+    errNoJobText: "Please paste the job text to analyze.",
+    errShortJobText: "The job text is too short for a serious analysis (at least 100 characters).",
+    statusMissingCv: "Please upload your CV as a PDF.",
+    statusNotPdf: "The CV must be a PDF file.",
+    statusTooBig: "The CV exceeds 8 MB. Please provide a lighter version.",
+    statusSending: "Analyzing (this can take up to a minute) — don't close this page.",
+    statusNetworkErr: "Could not reach the analysis service. Check your connection and try again.",
+    statusServerErr: "The analysis service hit an error. Please try again in a few minutes.",
+    planTacheLabel: "Per task — $5",
+    planAbonnementLabel: "Subscription — $9",
+    paidPageTitle: "Payment confirmed",
+    paidPageBody: "You can close this tab and go back to the one where you started your analysis — the download will start automatically.",
+    paidPageBodySameTab: "Your download is starting…"
+  }
+};
+
+// Langue par defaut : anglais (marche Upwork majoritairement anglophone).
+// Le visiteur peut basculer en francais avec le selecteur en haut de page.
+let currentLang = 'en';
+function t() { return translations[currentLang]; }
+
+/* ===================================================================
+   DOCUMENT EXEMPLE — rendu dans la langue active
+   =================================================================== */
+const SAMPLE = {
+  fr: {
+    p1: "1. Résumé de l'offre",
+    titre: "Excel Contract Tracking Dashboard",
+    meta: "Catégorie : Excel / Business Intelligence<br>Portée : Projet en cours · prix fixe<br>Budget : 75,00 $ · niveau Intermédiaire<br>Localisation : Worldwide",
+    hSkills: "Compétences requises", skills: [
+      "Microsoft Excel (compétence obligatoire) : formules et fonctionnalités natives uniquement",
+      "Analyse de données (souhaitée)",
+      "Classeur entièrement modifiable et maintenable par le client"
+    ],
+    hDeliv: "Livrables attendus", deliv: [
+      "Tableau de bord de suivi de contrats : statuts, dates clés, fenêtres de renouvellement",
+      "Suivi de la performance des prestataires et de l'état de mobilisation",
+      "Actions ouvertes, actions en retard et relances à effectuer"
+    ],
+    hClient: "Profil client et concurrence", client: [
+      "20 à 50 propositions déposées — concurrence forte",
+      "1 embauche déjà réalisée, 3 entretiens en cours, 6 invitations envoyées dont 3 sans réponse",
+      "Fourchette d'enchères : bas 50 $, moyenne 76,94 $, haut 200 $",
+      "Dernière consultation par le client : 44 minutes avant la capture"
+    ],
+    hWatch: "Points d'attention", watch: [
+      "Une embauche est déjà faite et trois entretiens sont en cours : la position est celle d'un challenger tardif.",
+      "Prix fixe de 75 $ pour un périmètre large (statuts, échéances, performance, mobilisation, relances) : risque net de dérive du périmètre.",
+      "Annoncé comme « projet en cours » alors que le livrable décrit est ponctuel : ambiguïté à lever avant tout engagement."
+    ],
+    hPos: "Points positifs", pos: [
+      "Périmètre fonctionnel clair et livrable unique : le travail est chiffrable avec précision.",
+      "Contrainte « formules Excel natives uniquement » : élimine les candidats qui ne savent travailler qu'avec des macros.",
+      "La moyenne des enchères (76,94 $) est proche du budget affiché : le client n'est pas déconnecté du marché."
+    ],
+    p2: "2. Analyse de compatibilité",
+    tech: "Adéquation technique", odds: "Chances réelles d'être retenu",
+    hStr: "Points forts de la candidature", str: [
+      "Excel avancé et conception de tableaux de bord constituent le socle professionnel quotidien du profil.",
+      "Expérience de tableaux de bord destinés à des décideurs non techniques, exactement le public visé ici.",
+      "La contrainte de maintenabilité par le client correspond à une pratique déjà établie : modèles lisibles et documentés."
+    ],
+    hAddr: "Points à adresser", addr: [
+      "Une embauche est déjà faite : la proposition doit apporter un élément différenciant dès les deux premières lignes.",
+      "Ne pas accepter les 75 $ sans borner le périmètre : nombre de contrats, nombre d'onglets, cycles de révision inclus."
+    ],
+    hReco: "Recommandation",
+    reco: "Techniquement bien alignée, mais la position de challenger tardif et le prix fixe serré pèsent lourd. Postuler uniquement en bornant explicitement le périmètre dès le premier message, et en proposant le découpage en jalons ci-dessous.",
+    p3: "3. Stratégie de contrat suggérée",
+    badge: "Prix fixe",
+    just: "Le livrable est unique et bien délimité (un classeur Excel fonctionnel). Le prix fixe est plus propre et plus rassurant pour le client, et protège mieux contre une dérive du périmètre qu'un tarif horaire sur un besoin décrit comme « projet en cours ».",
+    hRate: "Note tarifaire",
+    rate: "Le budget de 75 $ est cohérent avec la moyenne des enchères (76,94 $) mais bas pour l'étendue décrite. Viser 120–150 $ en prix fixe en bornant le périmètre à un nombre défini de contrats et deux cycles de révision, ou accepter 75 $ en réduisant explicitement le périmètre au suivi des statuts et des échéances.",
+    hMil: "Jalons de facturation",
+    th: ["#", "Libellé", "Description", "Échéance", "Montant"],
+    mil: [
+      ["1", "Structure & données", "Cadrage du besoin, structure du classeur, import et nettoyage des données de contrats fournies", "J+3", "45 $"],
+      ["2", "Tableau de bord", "Statuts, dates clés, fenêtres de renouvellement, alertes d'actions en retard, récapitulatifs", "J+7", "55 $"],
+      ["3", "Livraison finale", "Ajustements selon retours, documentation d'utilisation, classeur final livré", "J+10", "30 $"]
+    ],
+    total: "Total : 130 $ (prix fixe recommandé, à négocier)",
+    p4: "4. Lettre de motivation (prête à copier-coller)",
+    letter: `Hello,
+
+Your posting sets one constraint most Excel proposals quietly ignore: native formulas only, fully editable. That constraint is the whole point — it decides whether your team can still maintain this workbook next year without calling anyone back.
+
+I build contract and activity trackers in Excel for decision-makers who are not analysts: status views, renewal windows, overdue-action flags, all driven by formulas your team can read and adjust. No macros, no hidden logic.
+
+One question before scoping: roughly how many contracts will the workbook track, and do renewal windows follow a single rule or vary by contractor? That answer changes the structure significantly, and I would rather size it correctly than guess.
+
+Best regards,
+Armand Tre Bi`,
+    hNotes: "Notes d'usage", notes: [
+      "La première ligne reprend une contrainte précise de l'annonce : c'est ce qui distingue la proposition des candidatures génériques, indispensable quand trois entretiens sont déjà en cours.",
+      "La question finale sert double : elle montre l'expérience et fournit l'information nécessaire pour verrouiller le périmètre avant d'accepter le prix fixe."
+    ]
+  },
+  en: {
+    p1: "1. Job summary",
+    titre: "Excel Contract Tracking Dashboard",
+    meta: "Category: Excel / Business Intelligence<br>Scope: Ongoing project · fixed price<br>Budget: $75.00 · Intermediate level<br>Location: Worldwide",
+    hSkills: "Required skills", skills: [
+      "Microsoft Excel (mandatory): native formulas and built-in features only",
+      "Data analysis (nice to have)",
+      "Fully editable workbook, maintainable by the client"
+    ],
+    hDeliv: "Expected deliverables", deliv: [
+      "Contract tracking dashboard: statuses, key dates, renewal windows",
+      "Contractor performance tracking and mobilization readiness",
+      "Open actions, overdue actions and follow-up requirements"
+    ],
+    hClient: "Client profile and competition", client: [
+      "20 to 50 proposals submitted — strong competition",
+      "1 hire already made, 3 interviews in progress, 6 invites sent with 3 unanswered",
+      "Bid range: low $50, average $76.94, high $200",
+      "Last viewed by the client: 44 minutes before capture"
+    ],
+    hWatch: "Points to watch", watch: [
+      "A hire has already been made and three interviews are running: this is a late-challenger position.",
+      "Fixed price of $75 for a broad scope (statuses, deadlines, performance, mobilization, follow-ups): clear scope-creep risk.",
+      "Listed as an 'ongoing project' while the described deliverable is one-off: an ambiguity to clear before committing."
+    ],
+    hPos: "Positive points", pos: [
+      "Clear functional scope and a single deliverable: the work can be priced precisely.",
+      "The 'native Excel formulas only' constraint filters out candidates who can only work with macros.",
+      "The average bid ($76.94) sits close to the posted budget: the client is not disconnected from the market."
+    ],
+    p2: "2. Compatibility analysis",
+    tech: "Technical fit", odds: "Realistic odds of being hired",
+    hStr: "Strengths of the application", str: [
+      "Advanced Excel and dashboard design are the profile's daily professional core.",
+      "Experience building dashboards for non-technical decision-makers — exactly the audience here.",
+      "The client-maintainability constraint matches an established practice: readable, documented models."
+    ],
+    hAddr: "Points to address", addr: [
+      "A hire is already made: the proposal must land a differentiator within the first two lines.",
+      "Do not accept $75 without bounding the scope: number of contracts, number of tabs, revision cycles included."
+    ],
+    hReco: "Recommendation",
+    reco: "Technically well aligned, but the late-challenger position and the tight fixed price weigh heavily. Apply only by explicitly bounding the scope in the first message, and by proposing the milestone split below.",
+    p3: "3. Suggested contract strategy",
+    badge: "Fixed price",
+    just: "The deliverable is single and well defined (one working Excel workbook). Fixed price is cleaner and more reassuring for the client, and protects better against scope creep than an hourly rate on a need described as an 'ongoing project'.",
+    hRate: "Pricing note",
+    rate: "The $75 budget is consistent with the average bid ($76.94) but low for the described scope. Target $120–150 fixed by bounding the scope to a defined number of contracts and two revision cycles, or accept $75 by explicitly reducing the scope to status and deadline tracking.",
+    hMil: "Billing milestones",
+    th: ["#", "Label", "Description", "Due", "Amount"],
+    mil: [
+      ["1", "Structure & data", "Requirements framing, workbook structure, import and cleanup of the supplied contract data", "D+3", "$45"],
+      ["2", "Dashboard", "Statuses, key dates, renewal windows, overdue-action flags, summary views", "D+7", "$55"],
+      ["3", "Final delivery", "Adjustments from client feedback, usage documentation, final workbook delivered", "D+10", "$30"]
+    ],
+    total: "Total: $130 (recommended fixed price, negotiable)",
+    p4: "4. Cover letter (ready to paste)",
+    letter: `Hello,
+
+Your posting sets one constraint most Excel proposals quietly ignore: native formulas only, fully editable. That constraint is the whole point — it decides whether your team can still maintain this workbook next year without calling anyone back.
+
+I build contract and activity trackers in Excel for decision-makers who are not analysts: status views, renewal windows, overdue-action flags, all driven by formulas your team can read and adjust. No macros, no hidden logic.
+
+One question before scoping: roughly how many contracts will the workbook track, and do renewal windows follow a single rule or vary by contractor? That answer changes the structure significantly, and I would rather size it correctly than guess.
+
+Best regards,
+Armand Tre Bi`,
+    hNotes: "Usage notes", notes: [
+      "The opening line picks up a precise constraint from the posting: that is what separates this from generic proposals, which matters when three interviews are already running.",
+      "The closing question does double duty: it signals experience and gathers what is needed to lock the scope before accepting a fixed price."
+    ]
+  }
+};
+
+function renderSample() {
+  const el = document.getElementById('sample-doc');
+  if (!el) return;
+  const s = SAMPLE[currentLang] || SAMPLE.fr;
+  const esc = (v) => String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const ul = (arr) => '<ul>' + (arr || []).map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>';
+  const h5 = (t, c) => '<h5 style="color:' + c + ';">' + esc(t) + '</h5>';
+
+  let h = '';
+  h += '<h4>' + esc(s.p1) + '</h4>';
+  h += '<p><b>' + esc(s.titre) + '</b></p>';
+  h += '<p style="color:#5B6B7C;">' + s.meta + '</p>';
+  h += h5(s.hSkills, '#2A78D6') + ul(s.skills);
+  h += h5(s.hDeliv, '#2A78D6') + ul(s.deliv);
+  h += h5(s.hClient, '#2A78D6') + ul(s.client);
+  h += h5(s.hWatch, '#B5590B') + ul(s.watch);
+  h += h5(s.hPos, '#1B7A3D') + ul(s.pos);
+
+  h += '<h4>' + esc(s.p2) + '</h4>';
+  h += '<div class="sample-scores">' +
+    '<div class="sample-score" style="background:rgba(27,122,61,.08);border:1px solid #1B7A3D;color:#1B7A3D;">' +
+    '<b>88 %</b><span>' + esc(s.tech) + '</span></div>' +
+    '<div class="sample-score" style="background:rgba(168,50,42,.08);border:1px solid #A8322A;color:#A8322A;">' +
+    '<b>34 %</b><span>' + esc(s.odds) + '</span></div></div>';
+  h += h5(s.hStr, '#1B7A3D') + ul(s.str);
+  h += h5(s.hAddr, '#B5590B') + ul(s.addr);
+  h += h5(s.hReco, '#0D3B66') + '<p>' + esc(s.reco) + '</p>';
+
+  h += '<h4>' + esc(s.p3) + '</h4>';
+  h += '<p><span class="sample-badge">' + esc(s.badge) + '</span></p>';
+  h += '<p>' + esc(s.just) + '</p>';
+  h += '<div class="sample-rate"><b>' + esc(s.hRate) + '.</b> ' + esc(s.rate) + '</div>';
+  h += h5(s.hMil, '#2A78D6');
+  h += '<table class="sample-table"><tr>' +
+    s.th.map((t, i) => '<th' + (i === 4 ? ' class="amt"' : '') + '>' + esc(t) + '</th>').join('') +
+    '</tr>' + s.mil.map(r =>
+      '<tr><td>' + esc(r[0]) + '</td><td><b>' + esc(r[1]) + '</b></td><td>' + esc(r[2]) +
+      '</td><td>' + esc(r[3]) + '</td><td class="amt">' + esc(r[4]) + '</td></tr>').join('') + '</table>';
+  h += '<p class="sample-total">' + esc(s.total) + '</p>';
+
+  h += '<h4>' + esc(s.p4) + '</h4>';
+  h += '<div class="sample-letter">' + esc(s.letter) + '</div>';
+  h += h5(s.hNotes, '#5B6B7C') + ul(s.notes);
+
+  el.innerHTML = h;
+}
+
+
+/* ===================================================================
+   RETOUR DE PAIEMENT CHARIOW
+   URL de redirection a configurer sur Chariow, par produit :
+     A la tache  -> https://trebi7.github.io/Upwork-Profile-Analyzer/?paid=tache
+     Abonnement  -> https://trebi7.github.io/Upwork-Profile-Analyzer/?paid=abonnement
+
+   Deux cas sont couverts :
+   1. Paiement dans un NOUVEL onglet -> on depose un signal en localStorage,
+      l'onglet d'origine le detecte et lance le telechargement.
+   2. Paiement dans le MEME onglet (popup bloquee par le navigateur) -> le
+      rapport a ete sauvegarde avant la redirection, on le restaure et on
+      telecharge directement. Sans cela, le client perdait son analyse.
+   =================================================================== */
+let sameTabResume = null;
+
+const paidPlanFromUrl = (function () {
+  const p = new URLSearchParams(window.location.search).get('paid');
+  return (p === 'tache' || p === 'abonnement') ? p : null;
+})();
+
+function renderPaidPage(message) {
+  const html =
+    '<div style="max-width:520px;margin:80px auto;text-align:center;font-family:Inter,system-ui,sans-serif;padding:0 20px;">' +
+    '<h1 style="font-family:\'Space Grotesk\',sans-serif;color:#1B7A3D;font-size:26px;">✅ ' + t().paidPageTitle + '</h1>' +
+    '<p style="color:#5B6B7C;font-size:15px;line-height:1.6;">' + message + '</p>' +
+    '</div>';
+  // Le script est en fin de body : DOMContentLoaded a souvent DEJA ete emis.
+  // Attendre l'evenement laissait la page blanche. On teste donc readyState.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { document.body.innerHTML = html; });
+  } else {
+    document.body.innerHTML = html;
+  }
+}
+
+/* ===================================================================
+   ETAT
+   =================================================================== */
+let selectedPlan = null;
+let reportData = null;      // rapport recu APRES paiement verifie
+let pendingRequest = null;  // demande en attente de paiement (jamais envoyee avant)
+let paymentPollInterval = null;
+let selectedFileName = null;
+
+/* ===================================================================
+   UTILITAIRES
+   =================================================================== */
+function slugify(str) {
+  return (str || 'analyse').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 60) || 'analyse';
+}
+
+function saveBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  // Revocation differee : une revocation immediate annule parfois le
+  // telechargement sur certains navigateurs.
+  setTimeout(function () { URL.revokeObjectURL(url); }, 20000);
+}
+
+/* ===================================================================
+   GENERATION WORD NATIVE (OOXML)
+   La bibliotheque html-docx-js produisait un docx "altChunk" : Word pour
+   ordinateur l'affichait, mais Google Docs, LibreOffice, Word en ligne et
+   Word mobile ouvraient un document VIDE. On construit donc ici de vrais
+   paragraphes OOXML a partir des donnees structurees renvoyees par n8n.
+   =================================================================== */
+function xmlEsc(s) {
+  return String(s === null || s === undefined ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&apos;')
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+}
+
+function runXml(text, o) {
+  o = o || {};
+  const rPr = '<w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/>' +
+    (o.bold ? '<w:b/>' : '') + (o.caps ? '<w:caps/>' : '') +
+    (o.color ? '<w:color w:val="' + o.color + '"/>' : '') +
+    '<w:sz w:val="' + (o.size || 22) + '"/><w:szCs w:val="' + (o.size || 22) + '"/></w:rPr>';
+  return '<w:r>' + rPr + '<w:t xml:space="preserve">' + xmlEsc(text) + '</w:t></w:r>';
+}
+
+function paraXml(text, o) {
+  o = o || {};
+  const pPr = '<w:pPr>' +
+    (o.align ? '<w:jc w:val="' + o.align + '"/>' : '') +
+    (o.bullet ? '<w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>' : '') +
+    '<w:spacing w:before="' + (o.before || 0) + '" w:after="' + (o.after === undefined ? 120 : o.after) + '" w:line="264" w:lineRule="auto"/>' +
+    (o.shade ? '<w:shd w:val="clear" w:color="auto" w:fill="' + o.shade + '"/>' : '') +
+    (o.border ? '<w:pBdr><w:top w:val="single" w:sz="6" w:color="' + o.border + '"/><w:left w:val="single" w:sz="6" w:color="' + o.border + '"/><w:bottom w:val="single" w:sz="6" w:color="' + o.border + '"/><w:right w:val="single" w:sz="6" w:color="' + o.border + '"/></w:pBdr>' : '') +
+    '</w:pPr>';
+  return '<w:p>' + pPr + (text === '' ? '' : runXml(text, o)) + '</w:p>';
+}
+
+// --- Tableau Word natif (pour les jalons de facturation) ---
+function cellXml(text, o, w) {
+  o = o || {};
+  return '<w:tc><w:tcPr><w:tcW w:w="' + w + '" w:type="dxa"/>' +
+    (o.shade ? '<w:shd w:val="clear" w:color="auto" w:fill="' + o.shade + '"/>' : '') +
+    '<w:vAlign w:val="center"/></w:tcPr>' +
+    paraXml(text, { size: o.size || 19, bold: o.bold, color: o.color || '14202E',
+                    align: o.align, after: 40 }) + '</w:tc>';
+}
+
+function tableXml(widths, rows) {
+  const bords = ['top','left','bottom','right','insideH','insideV']
+    .map(b => '<w:' + b + ' w:val="single" w:sz="4" w:color="E1E8F0"/>').join('');
+  const tblPr = '<w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders>' + bords + '</w:tblBorders>' +
+    '<w:tblCellMar><w:top w:w="60" w:type="dxa"/><w:left w:w="90" w:type="dxa"/>' +
+    '<w:bottom w:w="60" w:type="dxa"/><w:right w:w="90" w:type="dxa"/></w:tblCellMar></w:tblPr>';
+  const grid = '<w:tblGrid>' + widths.map(w => '<w:gridCol w:w="' + w + '"/>').join('') + '</w:tblGrid>';
+  const corps = rows.map(function (r) {
+    return '<w:tr>' + r.cells.map(function (c, i) {
+      return cellXml(c.text, {
+        bold: r.header || c.bold,
+        shade: r.header ? '0D3B66' : (r.zebra ? 'F5F8FC' : null),
+        color: r.header ? 'FFFFFF' : '14202E',
+        align: c.align, size: r.header ? 17 : 19
+      }, widths[i]);
+    }).join('') + '</w:tr>';
+  }).join('');
+  // Word exige un paragraphe apres un tableau
+  return '<w:tbl>' + tblPr + grid + corps + '</w:tbl>' + paraXml('', { after: 80 });
+}
+
+function buildDocumentXml(d, lang) {
+  const NAVY='0D3B66', ACCENT='2A78D6', AMBER='B5590B', GREEN='1B7A3D', RED='A8322A', INK='14202E', MUTED='5B6B7C';
+  const L = (lang === 'en')
+    ? { title:'Upwork job analysis', on:'Analysis of ', yes:'Recommended', no:'Not recommended', nd:'N/A',
+        p1:'1. Job summary', p2:'2. Compatibility analysis', p3:'3. Cover letter (English, ready to paste)',
+        f_cat:'Category', f_scope:'Scope', f_budget:'Budget', f_loc:'Location', f_link:'Link',
+        s_skills:'Required skills', s_deliv:'Expected deliverables', s_client:'Client profile and competition',
+        s_watch:'Points to watch', s_pos:'Positive points', s_tech:'Technical fit', s_odds:'Realistic odds of being hired',
+        s_cv:'Profile extracted from CV', s_str:'Strengths of the application', s_addr:'Points to address',
+        s_reco:'Recommendation', s_notes:'Usage notes',
+        p_contract:'3. Suggested contract strategy', p_letter:'4. Cover letter (English, ready to paste)',
+        c_type:'Recommended contract type', c_rate:'Pricing note', c_mil:'Billing milestones',
+        th_num:'#', th_lab:'Label', th_desc:'Description', th_due:'Due', th_amt:'Amount', c_total:'Total' }
+    : { title:"Analyse d\u2019offre Upwork", on:'Analyse du ', yes:'Candidature recommand\u00e9e', no:'Candidature d\u00e9conseill\u00e9e', nd:'N/D',
+        p1:"1. R\u00e9sum\u00e9 de l\u2019offre", p2:'2. Analyse de compatibilit\u00e9', p3:'3. Lettre de motivation (anglais, pr\u00eate \u00e0 copier-coller)',
+        f_cat:'Cat\u00e9gorie', f_scope:'Port\u00e9e', f_budget:'Budget', f_loc:'Localisation', f_link:'Lien',
+        s_skills:'Comp\u00e9tences requises', s_deliv:'Livrables attendus', s_client:'Profil client et concurrence',
+        s_watch:"Points d\u2019attention", s_pos:'Points positifs', s_tech:'Ad\u00e9quation technique', s_odds:"Chances r\u00e9elles d\u2019\u00eatre retenu",
+        s_cv:'Profil extrait du CV', s_str:'Points forts de la candidature', s_addr:'Points \u00e0 adresser',
+        s_reco:'Recommandation', s_notes:"Notes d\u2019usage",
+        p_contract:'3. Strat\u00e9gie de contrat sugg\u00e9r\u00e9e', p_letter:'4. Lettre de motivation (anglais, pr\u00eate \u00e0 copier-coller)',
+        c_type:'Type de contrat recommand\u00e9', c_rate:'Note tarifaire', c_mil:'Jalons de facturation',
+        th_num:'#', th_lab:'Libell\u00e9', th_desc:'Description', th_due:'\u00c9ch\u00e9ance', th_amt:'Montant', c_total:'Total' };
+
+  const o = d.offre || {};
+  const st = (typeof d.score_technique === 'number') ? d.score_technique : null;
+  const sc = (typeof d.score_chances === 'number') ? d.score_chances : null;
+  const coul = (s) => s === null ? MUTED : (s >= 70 ? GREEN : (s >= 50 ? AMBER : RED));
+  const verdict = d.postuler === true ? L.yes : (d.postuler === false ? L.no : '');
+  let dateStr = '';
+  try {
+    dateStr = new Date(d.submitted_at || Date.now())
+      .toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR', { day:'2-digit', month:'long', year:'numeric' });
+  } catch (e) {}
+
+  const titrePartie = (t) => paraXml(t, { bold:true, color:NAVY, size:28, before:280, after:140 });
+  const section = (t, c) => paraXml(t, { bold:true, caps:true, color:c, size:18, before:160, after:60 });
+  const champ = (lab, val) => val ? paraXml(lab + ' : ' + val, { size:21, color:INK, after:60 }) : '';
+  const puces = (arr) => (Array.isArray(arr) ? arr : []).map(x => paraXml(x, { size:21, color:INK, bullet:true, after:80 })).join('');
+
+  let body = '';
+  body += paraXml('UPWORK \u00d7 DATA/BI', { bold:true, color:NAVY, size:20, after:40 });
+  body += paraXml(L.title, { bold:true, color:NAVY, size:36, after:40 });
+  body += paraXml(d.job_title || '', { bold:true, color:INK, size:26, after:40 });
+  if (dateStr) body += paraXml(L.on + dateStr + (d.freelance_name ? ' \u2014 ' + d.freelance_name : ''), { color:MUTED, size:18, after:200 });
+
+  // --- Partie 1 ---
+  body += titrePartie(L.p1);
+  body += champ(L.f_cat, o.categorie);
+  body += champ(L.f_scope, o.portee);
+  body += champ(L.f_budget, o.budget);
+  body += champ(L.f_loc, o.localisation);
+  body += champ(L.f_link, d.job_url);
+  if (o.competences_requises && o.competences_requises.length) { body += section(L.s_skills, ACCENT); body += puces(o.competences_requises); }
+  if (o.livrables && o.livrables.length) { body += section(L.s_deliv, ACCENT); body += puces(o.livrables); }
+  if (o.profil_client && o.profil_client.length) { body += section(L.s_client, ACCENT); body += puces(o.profil_client); }
+  if (d.points_attention && d.points_attention.length) { body += section(L.s_watch, AMBER); body += puces(d.points_attention); }
+  if (d.points_positifs && d.points_positifs.length) { body += section(L.s_pos, GREEN); body += puces(d.points_positifs); }
+
+  // --- Partie 2 ---
+  body += titrePartie(L.p2);
+  body += paraXml(L.s_tech + ' : ' + (st === null ? L.nd : st + ' %'),
+                  { bold:true, color:coul(st), size:26, after:60, shade:'F5F8FC', border:coul(st), align:'center' });
+  body += paraXml(L.s_odds + ' : ' + (sc === null ? L.nd : sc + ' %') + (verdict ? '  \u2022  ' + verdict : ''),
+                  { bold:true, color:coul(sc), size:26, after:120, shade:'F5F8FC', border:coul(sc), align:'center' });
+  if (d.score_justification) body += paraXml(d.score_justification, { size:21, color:INK, after:180 });
+  if (d.profil_cv) { body += section(L.s_cv, ACCENT); body += paraXml(d.profil_cv, { size:21, color:INK, after:180 }); }
+  if (d.points_forts && d.points_forts.length) { body += section(L.s_str, GREEN); body += puces(d.points_forts); }
+  if (d.points_a_adresser && d.points_a_adresser.length) { body += section(L.s_addr, AMBER); body += puces(d.points_a_adresser); }
+  if (d.recommandation) {
+    body += section(L.s_reco, NAVY);
+    body += paraXml(d.recommandation, { bold:true, size:22, color:INK, after:200, shade:'F5F8FC', border:'E1E8F0' });
+  }
+
+  // --- Partie 3 : strategie de contrat ---
+  const s = d.strategie_contrat || {};
+  if (s.type_recommande || s.justification || (s.jalons && s.jalons.length)) {
+    body += titrePartie(L.p_contract);
+    if (s.type_recommande) {
+      body += paraXml(L.c_type + ' : ' + s.type_recommande,
+                      { bold:true, size:22, color:NAVY, after:100, shade:'F5F8FC', border:NAVY });
+    }
+    if (s.justification) body += paraXml(s.justification, { size:21, color:INK, after:140 });
+    if (s.note_tarifaire) {
+      body += section(L.c_rate, AMBER);
+      body += paraXml(s.note_tarifaire, { size:21, color:INK, after:160, shade:'FDF6EE', border:AMBER });
+    }
+    if (s.jalons && s.jalons.length) {
+      body += section(L.c_mil, ACCENT);
+      const largeurs = [560, 1900, 4180, 1180, 1380];
+      const lignes = [{ header:true, cells:[
+        { text:L.th_num }, { text:L.th_lab }, { text:L.th_desc },
+        { text:L.th_due }, { text:L.th_amt, align:'right' }] }];
+      s.jalons.forEach(function (j, i) {
+        lignes.push({ zebra: (i % 2 === 1), cells: [
+          { text:String(j.numero || (i+1)) },
+          { text:j.libelle || '', bold:true },
+          { text:j.description || '' },
+          { text:j.echeance || '' },
+          { text:j.montant || '', align:'right', bold:true }] });
+      });
+      body += tableXml(largeurs, lignes);
+    }
+    if (s.total) {
+      body += paraXml(L.c_total + ' : ' + s.total, { bold:true, size:23, color:NAVY, align:'right', after:180 });
+    }
+  }
+
+  // --- Partie 4 : lettre de motivation ---
+  if (d.lettre_motivation) {
+    body += titrePartie(L.p_letter);
+    String(d.lettre_motivation).split(/\n+/).forEach(function (par) {
+      if (par.trim()) body += paraXml(par.trim(), { size:21, color:INK, after:140 });
+    });
+  }
+  if (d.notes_usage && d.notes_usage.length) { body += section(L.s_notes, MUTED); body += puces(d.notes_usage); }
+
+  body += paraXml('Iri\u00e9 Armand Davy TRE BI  \u2022  Data Analyst', { color:MUTED, size:17, align:'center', before:240 });
+
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>' + body +
+    '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="709" w:footer="709" w:gutter="0"/></w:sectPr>' +
+    '</w:body></w:document>';
+}
+
+const DOCX_CONTENT_TYPES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+  '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+  '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+  '<Default Extension="xml" ContentType="application/xml"/>' +
+  '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+  '<Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>' +
+  '</Types>';
+const DOCX_ROOT_RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+  '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+  '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
+  '</Relationships>';
+const DOCX_DOC_RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+  '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+  '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>' +
+  '</Relationships>';
+const DOCX_NUMBERING = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+  '<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+  '<w:abstractNum w:abstractNumId="0"><w:lvl w:ilvl="0"><w:start w:val="1"/><w:numFmt w:val="bullet"/><w:lvlText w:val="\u2022"/>' +
+  '<w:lvlJc w:val="left"/><w:pPr><w:ind w:left="360" w:hanging="360"/></w:pPr>' +
+  '<w:rPr><w:rFonts w:ascii="Symbol" w:hAnsi="Symbol" w:hint="default"/></w:rPr></w:lvl></w:abstractNum>' +
+  '<w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num></w:numbering>';
+
+function buildDocxBlob(d, lang) {
+  if (typeof JSZip === 'undefined') throw new Error('JSZip indisponible');
+  const zip = new JSZip();
+  zip.file('[Content_Types].xml', DOCX_CONTENT_TYPES);
+  zip.folder('_rels').file('.rels', DOCX_ROOT_RELS);
+  const w = zip.folder('word');
+  w.file('document.xml', buildDocumentXml(d, lang));
+  w.file('numbering.xml', DOCX_NUMBERING);
+  w.folder('_rels').file('document.xml.rels', DOCX_DOC_RELS);
+  return zip.generateAsync({
+    type: 'blob',
+    mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  });
+}
+
+function triggerDownloads(onDone) {
+  if (!reportData || !reportData.report_html) return;
+  const base = slugify(reportData.job_title);
+  const lang = currentLang;
+
+  saveBlob(new Blob([reportData.report_html], { type: 'text/html;charset=utf-8' }),
+           'Analyse_' + base + '.html');
+
+  // Les navigateurs bloquent souvent deux telechargements simultanes :
+  // on espace le second.
+  setTimeout(function () {
+    let done = false;
+    const fin = function (ok) {
+      if (done) return;
+      done = true;
+      if (typeof onDone === 'function') onDone(ok);
+    };
+    try {
+      buildDocxBlob(reportData, lang).then(function (blob) {
+        saveBlob(blob, 'Analyse_' + base + '.docx');
+        fin(true);
+      }).catch(function () { fin(false); });
+    } catch (e) {
+      fin(false);
+    }
+  }, 900);
+}
+
+/* ===================================================================
+   CAS 2 : retour de paiement dans le MEME onglet
+   =================================================================== */
+if (paidPlanFromUrl) {
+  try { localStorage.setItem(LS_PAID_PREFIX + paidPlanFromUrl, Date.now().toString()); } catch (e) {}
+
+  // Cas "meme onglet" : la page a ete rechargee par la redirection Chariow.
+  // On restaure la demande sauvegardee et on lance l'analyse ici meme.
+  let restored = null;
+  try {
+    const saved = localStorage.getItem(LS_PENDING_REQUEST);
+    if (saved) restored = JSON.parse(saved);
+  } catch (e) {}
+
+  if (restored && restored.cv_base64) {
+    sameTabResume = restored;
+  } else {
+    renderPaidPage(t().paidPageBody);
+  }
+}
+
+/* ===================================================================
+   INTERFACE (uniquement si on n'est pas sur la page de confirmation)
+   =================================================================== */
+if (!paidPlanFromUrl || sameTabResume) {
+
+  const form = document.getElementById('screening-form');
+  const fileInput = document.getElementById('cv_file');
+  const fileDrop = document.getElementById('file-drop');
+  const fileDropLabel = document.getElementById('file-drop-label');
+  const statusBox = document.getElementById('status');
+  const submitBtn = document.getElementById('submit-btn');
+
+  function applyLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.getElementById('lang-fr').classList.toggle('active', lang === 'fr');
+    document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      const key = el.getAttribute('data-i18n');
+      if (t()[key] !== undefined) el.innerHTML = t()[key];
+    });
+    // Le document exemple est integralement rendu dans la langue active
+    renderSample();
+    // Le nom du fichier choisi etait ecrase par la traduction du libelle.
+    if (selectedFileName) fileDropLabel.textContent = selectedFileName;
+    if (selectedPlan) updatePlanRecap();
+    if (reportData) {
+      document.getElementById('result-title').textContent =
+        t().resultTitlePrefix + (reportData.job_title || '');
+    }
+  }
+
+  document.getElementById('lang-fr').addEventListener('click', function () { applyLanguage('fr'); });
+  document.getElementById('lang-en').addEventListener('click', function () { applyLanguage('en'); });
+
+  function setStepper(n) {
+    [1, 2, 3].forEach(function (i) {
+      const el = document.getElementById('stepper-' + i);
+      el.classList.remove('active', 'done');
+      if (i < n) el.classList.add('done');
+      if (i === n) el.classList.add('active');
+    });
+  }
+
+  function showStep(name) {
+    document.getElementById('step-plans').style.display = name === 'plans' ? '' : 'none';
+    document.getElementById('step-form').style.display = name === 'form' ? '' : 'none';
+    document.getElementById('step-result').style.display = name === 'result' ? '' : 'none';
+    setStepper(name === 'plans' ? 1 : name === 'form' ? 2 : 3);
+    if (name !== 'result' && paymentPollInterval) {
+      clearInterval(paymentPollInterval);
+      paymentPollInterval = null;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updatePlanRecap() {
+    document.getElementById('selected-plan-label').textContent =
+      selectedPlan === 'tache' ? t().planTacheLabel : t().planAbonnementLabel;
+  }
+
+  document.querySelectorAll('[data-plan]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      selectedPlan = btn.getAttribute('data-plan');
+      updatePlanRecap();
+      showStep('form');
+    });
+  });
+
+  document.getElementById('change-plan-btn').addEventListener('click', function () { showStep('plans'); });
+
+  fileDrop.addEventListener('click', function () { fileInput.click(); });
+  fileInput.addEventListener('change', function () {
+    const f = fileInput.files[0];
+    if (f) {
+      selectedFileName = f.name;
+      fileDrop.classList.add('has-file');
+      fileDropLabel.textContent = f.name;
+    }
+  });
+
+  function fileToBase64(file) {
+    return new Promise(function (resolve, reject) {
+      const reader = new FileReader();
+      reader.onload = function () { resolve(String(reader.result).split(',')[1]); };
+      reader.onerror = function () { reject(new Error('read')); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function showStatus(kind, message, withSpinner) {
+    statusBox.className = 'result-note show ' + kind;
+    statusBox.innerHTML = (withSpinner ? '<span class="spinner"></span>' : '') +
+      String(message).replace(/</g, '&lt;');
+  }
+
+  function setBusy(busy) {
+    submitBtn.disabled = busy;
+    submitBtn.textContent = busy ? t().submitBtnBusy : t().submitBtn;
+  }
+
+  // ------------------------------------------------------------------
+  // SOUMISSION : aucune analyse n'est lancee ici. On memorise la demande
+  // et on passe a l'ecran de deblocage. L'analyse ne partira qu'apres
+  // verification du paiement cote serveur.
+  // ------------------------------------------------------------------
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById('freelance_name').value.trim();
+    const email = document.getElementById('contact_email').value.trim();
+    const jobTitle = document.getElementById('job_title').value.trim();
+    const jobText = document.getElementById('job_text').value.trim();
+    const file = fileInput.files[0];
+
+    if (!name) { showStatus('err', t().errNoName); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showStatus('err', t().errNoEmail); return; }
+    if (!file) { showStatus('err', t().statusMissingCv); return; }
+    if (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)) { showStatus('err', t().statusNotPdf); return; }
+    if (file.size > MAX_CV_BYTES) { showStatus('err', t().statusTooBig); return; }
+    if (!jobTitle) { showStatus('err', t().errNoJobTitle); return; }
+    if (!jobText) { showStatus('err', t().errNoJobText); return; }
+    if (jobText.length < 100) { showStatus('err', t().errShortJobText); return; }
+
+    setBusy(true);
+    try {
+      const cv_base64 = await fileToBase64(file);
+      pendingRequest = {
+        freelance_name: name,
+        contact_email: email,
+        plan: selectedPlan,
+        cv_filename: file.name,
+        cv_base64: cv_base64,
+        job_title: jobTitle,
+        job_url: document.getElementById('job_url').value.trim(),
+        job_text: jobText
+      };
+    } catch (err) {
+      setBusy(false);
+      showStatus('err', t().statusNetworkErr);
+      return;
+    }
+    setBusy(false);
+
+    // Sauvegarde de secours : si le paiement se fait dans le MEME onglet,
+    // la page est rechargee et la demande serait perdue sans cela.
+    try {
+      localStorage.setItem(LS_PENDING_REQUEST, JSON.stringify(pendingRequest));
+    } catch (e) {
+      // Quota depasse (CV volumineux) : on continue, la demande reste en
+      // memoire tant que cet onglet reste ouvert.
+    }
+
+    statusBox.className = 'result-note';
+    reportData = null;
+    document.getElementById('result-title').textContent = t().readyTitle + ' — ' + jobTitle;
+    document.getElementById('result-meta').textContent = t().readyMeta;
+    document.getElementById('payment-area').classList.remove('show');
+    document.getElementById('reveal-payment-btn').style.display = '';
+    showStep('result');
+  });
+
+  // ------------------------------------------------------------------
+  // APRES PAIEMENT : envoi de la demande. Le serveur verifie la vente
+  // aupres de Chariow avant de lancer la moindre analyse.
+  // ------------------------------------------------------------------
+  async function lancerAnalyse() {
+    if (!pendingRequest) {
+      waitingNote.className = 'result-note show err';
+      waitingNote.textContent = t().lostRequest;
+      return;
+    }
+
+    waitingNote.className = 'result-note show pending';
+    waitingNote.innerHTML = '<span class="spinner"></span>' + t().analysisRunning;
+    document.getElementById('reveal-payment-btn').style.display = 'none';
+
+    let res;
+    try {
+      res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(pendingRequest)
+      });
+    } catch (err) {
+      waitingNote.className = 'result-note show err';
+      waitingNote.textContent = t().statusNetworkErr;
+      afficherBoutonReessayer();
+      return;
+    }
+
+    let data = {};
+    try { data = await res.json(); } catch (e) { data = {}; }
+
+    if (!res.ok || data.success === false || !data.report_html) {
+      waitingNote.className = 'result-note show err';
+      waitingNote.textContent = data.message || t().statusServerErr;
+      afficherBoutonReessayer();
+      return;
+    }
+
+    reportData = {
+      report_html: data.report_html,
+      job_title: data.job_title || pendingRequest.job_title,
+      plan: pendingRequest.plan,
+      freelance_name: data.freelance_name || pendingRequest.freelance_name,
+      submitted_at: data.submitted_at,
+      job_url: data.job_url || pendingRequest.job_url,
+      offre: data.offre,
+      score_technique: data.score_technique,
+      score_chances: data.score_chances,
+      score_justification: data.score_justification,
+      profil_cv: data.profil_cv,
+      points_attention: data.points_attention,
+      points_positifs: data.points_positifs,
+      points_forts: data.points_forts,
+      points_a_adresser: data.points_a_adresser,
+      recommandation: data.recommandation,
+      postuler: data.postuler,
+      lettre_motivation: data.lettre_motivation,
+      notes_usage: data.notes_usage
+    };
+
+    document.getElementById('result-title').textContent = t().resultTitlePrefix + reportData.job_title;
+    try { localStorage.removeItem(LS_PENDING_REQUEST); } catch (e) {}
+
+    const restants = (typeof data.jours_restants === 'number')
+      ? ' ' + data.jours_restants + t().subDaysLeft : '';
+
+    triggerDownloads(function (docxOk) {
+      waitingNote.className = 'result-note show ' + (docxOk ? 'ok' : 'err');
+      waitingNote.textContent = (docxOk ? t().downloadDone : t().docxFailed) + restants;
+    });
+  }
+
+  function afficherBoutonReessayer() {
+    const btn = document.getElementById('reveal-payment-btn');
+    btn.style.display = '';
+    btn.textContent = t().retryPayment;
+    btn.onclick = function () { lancerAnalyse(); };
+  }
+
+  /* --- Paiement / telechargement --- */
+  const waitingNote = document.getElementById('waiting-note');
+
+  function checkPaymentSignal() {
+    if (!selectedPlan) return;
+    const key = LS_PAID_PREFIX + selectedPlan;
+    let signal = null;
+    try { signal = localStorage.getItem(key); } catch (e) { return; }
+    if (!signal) return;
+
+    try { localStorage.removeItem(key); } catch (e) {}
+    if (paymentPollInterval) { clearInterval(paymentPollInterval); paymentPollInterval = null; }
+    lancerAnalyse();
+  }
+
+  window.addEventListener('storage', function (e) {
+    if (e.key === LS_PAID_PREFIX + selectedPlan) checkPaymentSignal();
+  });
+
+  document.getElementById('reveal-payment-btn').addEventListener('click', function () {
+    document.getElementById('chariow-pay-link').href = CHARIOW_LINKS[selectedPlan] || CHARIOW_LINKS.tache;
+    document.getElementById('payment-area').classList.add('show');
+    waitingNote.className = 'result-note show pending';
+    waitingNote.innerHTML = '<span class="spinner"></span>' + t().waitingNote;
+
+    checkPaymentSignal();
+    if (paymentPollInterval) clearInterval(paymentPollInterval);
+    paymentPollInterval = setInterval(checkPaymentSignal, 1500);
+  });
+
+  // Filet de secours : si la detection automatique echoue (onglet ferme,
+  // redirection ratee), le client force la verification. Aucun risque :
+  // c'est le serveur qui controle le paiement aupres de Chariow.
+  document.getElementById('confirm-paid-btn').addEventListener('click', function () {
+    if (reportData) { triggerDownloads(function () {}); return; }
+    lancerAnalyse();
+  });
+
+  // Reprise apres un paiement effectue dans le MEME onglet
+  if (sameTabResume) {
+    pendingRequest = sameTabResume;
+    selectedPlan = sameTabResume.plan || paidPlanFromUrl;
+    updatePlanRecap();
+    document.getElementById('result-title').textContent =
+      t().readyTitle + ' — ' + (sameTabResume.job_title || '');
+    document.getElementById('result-meta').textContent = t().readyMeta;
+    document.getElementById('payment-area').classList.add('show');
+    document.getElementById('chariow-pay-link').href = CHARIOW_LINKS[selectedPlan] || CHARIOW_LINKS.tache;
+    showStep('result');
+    lancerAnalyse();
+  }
+
+  applyLanguage(currentLang);
+}
+</script>
+</body>
+</html>
