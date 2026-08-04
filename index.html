@@ -305,7 +305,34 @@
 /* ===================================================================
    CONFIGURATION
    =================================================================== */
-const WEBHOOK_URL = "https://davy77.app.n8n.cloud/webhook/dab42738-055e-428a-95a9-999aaa86caac/upwork-screening-intake";
+// n8n publie le webhook sous la forme courte quand un chemin est defini sur le
+// noeud, et sous la forme longue (avec identifiant) sinon. On essaie les deux :
+// une adresse inexistante renvoie un 404 sans en-tete CORS, que le navigateur
+// signale comme une panne reseau. Le basculement evite tout diagnostic manuel.
+const WEBHOOK_URLS = [
+  "https://davy77.app.n8n.cloud/webhook/upwork-screening-intake",
+  "https://davy77.app.n8n.cloud/webhook/dab42738-055e-428a-95a9-999aaa86caac/upwork-screening-intake"
+];
+
+async function postWebhook(payload) {
+  let derniereErreur = null;
+  for (let i = 0; i < WEBHOOK_URLS.length; i++) {
+    try {
+      // Content-Type text/plain : evite la requete preflight CORS que le
+      // noeud Webhook n8n ne traite pas (le corps est parse cote n8n).
+      const res = await fetch(WEBHOOK_URLS[i], {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+      });
+      if (res.status === 404) { derniereErreur = new Error('404'); continue; }
+      return res;
+    } catch (e) {
+      derniereErreur = e;
+    }
+  }
+  throw derniereErreur || new Error('injoignable');
+}
 const CHARIOW_LINKS = {
   tache: "https://ymkecnxg.mychariow.com/prd_35s5kk1w",
   abonnement: "https://ymkecnxg.mychariow.com/prd_gqsgg9nk"
@@ -1173,11 +1200,7 @@ if (!paidPlanFromUrl || sameTabResume) {
 
     let res;
     try {
-      res = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(pendingRequest)
-      });
+      res = await postWebhook(pendingRequest);
     } catch (err) {
       waitingNote.className = 'result-note show err';
       waitingNote.textContent = t().statusNetworkErr;
