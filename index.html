@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   :root{
     --navy:#0D3B66; --navy-deep:#0A2C4E; --accent:#2A78D6; --amber:#B5590B;
@@ -308,7 +307,7 @@
     <section id="step-result" style="display:none;">
       <div class="result-box">
         <p class="file-title" id="result-title"></p>
-        <p class="file-meta" id="result-meta" data-i18n="resultMeta">Formats : Word (.docx) et HTML</p>
+        <p class="file-meta" id="result-meta" data-i18n="resultMeta">Format : HTML, dans la langue de cette page</p>
         <button type="button" class="btn btn-primary" id="reveal-payment-btn" data-i18n="revealPaymentBtn">Télécharger mes résultats →</button>
 
         <div class="payment-area" id="payment-area">
@@ -387,10 +386,9 @@ const translations = {
     tagline: "Zéro connect gaspillé",
     prg1: "Vérification du paiement", prg2: "Lecture du CV et de l'offre",
     prg3: "Analyse et rédaction du rapport", prg4: "Génération des fichiers", prg5: "Téléchargement",
-    prgLong: "L'analyse complète prend en général une à deux minutes. Ne ferme pas cette page.",
+    prgLong: "L'analyse prend en général moins de deux minutes. Ne ferme pas cette page.",
     filesTitle: "Vos fichiers",
-    fileHtmlFr: "Rapport HTML — français", fileHtmlEn: "Rapport HTML — anglais",
-    fileDocxFr: "Rapport Word — français", fileDocxEn: "Rapport Word — anglais",
+    fileHtmlFr: "Rapport d'analyse (HTML)", fileHtmlEn: "Rapport d'analyse (HTML)",
     fileHint: "cliquez pour télécharger à nouveau",
     payDone: "Paiement confirmé",
     payFirst: "Réglez d'abord sur Chariow, puis revenez ici par le lien reçu.",
@@ -420,12 +418,12 @@ const translations = {
     jobTextHint: "Description, budget, compétences demandées, infos client si visibles.",
     submitBtn: "Envoyer pour analyse →",
     submitBtnBusy: "Analyse en cours…",
-    resultMeta: "Formats : Word (.docx) et HTML",
+    resultMeta: "Format : HTML, dans la langue de cette page",
     revealPaymentBtn: "Télécharger mes résultats →",
     payToDownload: "Le règlement se fait sur Chariow, dans un nouvel onglet. Une fois payé, reviens sur cet onglet et clique sur le bouton ci-dessous pour lancer ton analyse.",
     analysisRunning: "Paiement confirmé. Analyse en cours (jusqu'à une minute) — ne ferme pas cette page.",
     readyTitle: "Analyse prête à débloquer",
-    readyMeta: "Formats livrés : Word (.docx) et HTML",
+    readyMeta: "Livré en HTML, dans la langue de cette page",
     emailWarn: "Important : utilise sur Chariow la MÊME adresse email que celle saisie ci-dessus. C'est elle qui nous sert à retrouver ton paiement.",
     errNoPayment: "Aucun paiement valide trouvé pour cette adresse.",
     retryPayment: "Réessayer la vérification",
@@ -435,7 +433,6 @@ const translations = {
     confirmPaidBtn: "J'ai payé sur Chariow — lancer mon analyse →",
     waitingNote: "En attente de la confirmation du paiement…",
     downloadDone: "Téléchargement lancé. Vérifie le dossier de téléchargements de ton navigateur.",
-    docxFailed: "Le fichier HTML a été téléchargé. La version Word n'a pas pu être générée sur ce navigateur — ouvre le HTML puis enregistre-le en Word depuis ton traitement de texte.",
     resultTitlePrefix: "Analyse — ",
     errNoName: "Merci d'indiquer votre nom.",
     errNoEmail: "Merci d'indiquer une adresse email valide.",
@@ -458,10 +455,9 @@ const translations = {
     tagline: "No wasted connects",
     prg1: "Checking payment", prg2: "Reading CV and job posting",
     prg3: "Analysis and report writing", prg4: "Generating files", prg5: "Downloading",
-    prgLong: "A full analysis usually takes one to two minutes. Please don't close this page.",
+    prgLong: "The analysis usually takes under two minutes. Please don't close this page.",
     filesTitle: "Your files",
-    fileHtmlFr: "HTML report — French", fileHtmlEn: "HTML report — English",
-    fileDocxFr: "Word report — French", fileDocxEn: "Word report — English",
+    fileHtmlFr: "Analysis report (HTML)", fileHtmlEn: "Analysis report (HTML)",
     fileHint: "click to download again",
     payDone: "Payment confirmed",
     payFirst: "Pay on Chariow first, then come back here using the link you receive.",
@@ -491,12 +487,12 @@ const translations = {
     jobTextHint: "Description, budget, required skills, client info if visible.",
     submitBtn: "Send for analysis →",
     submitBtnBusy: "Analyzing…",
-    resultMeta: "Formats: Word (.docx) and HTML",
+    resultMeta: "Format: HTML, in this page's language",
     revealPaymentBtn: "Download my results →",
     payToDownload: "Payment happens on Chariow, in a new tab. Once paid, come back to this tab and click the button below to start your analysis.",
     analysisRunning: "Payment confirmed. Analyzing (up to a minute) — don't close this page.",
     readyTitle: "Analysis ready to unlock",
-    readyMeta: "Delivered formats: Word (.docx) and HTML",
+    readyMeta: "Delivered as HTML, in this page's language",
     emailWarn: "Important: use the SAME email address on Chariow as the one entered above. That is how we find your payment.",
     errNoPayment: "No valid payment found for this address.",
     retryPayment: "Retry verification",
@@ -506,7 +502,6 @@ const translations = {
     confirmPaidBtn: "I've paid on Chariow — start my analysis →",
     waitingNote: "Waiting for payment confirmation…",
     downloadDone: "Download started. Check your browser's downloads folder.",
-    docxFailed: "The HTML file was downloaded. The Word version could not be generated on this browser — open the HTML and save it as Word from your word processor.",
     resultTitlePrefix: "Analysis — ",
     errNoName: "Please enter your name.",
     errNoEmail: "Please enter a valid email address.",
@@ -798,256 +793,23 @@ function saveBlob(blob, filename) {
   setTimeout(function () { URL.revokeObjectURL(url); }, 20000);
 }
 
-/* ===================================================================
-   GENERATION WORD NATIVE (OOXML)
-   La bibliotheque html-docx-js produisait un docx "altChunk" : Word pour
-   ordinateur l'affichait, mais Google Docs, LibreOffice, Word en ligne et
-   Word mobile ouvraient un document VIDE. On construit donc ici de vrais
-   paragraphes OOXML a partir des donnees structurees renvoyees par n8n.
-   =================================================================== */
-function xmlEsc(s) {
-  return String(s === null || s === undefined ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&apos;')
-    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
-}
-
-function runXml(text, o) {
-  o = o || {};
-  const rPr = '<w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/>' +
-    (o.bold ? '<w:b/>' : '') + (o.caps ? '<w:caps/>' : '') +
-    (o.color ? '<w:color w:val="' + o.color + '"/>' : '') +
-    '<w:sz w:val="' + (o.size || 22) + '"/><w:szCs w:val="' + (o.size || 22) + '"/></w:rPr>';
-  return '<w:r>' + rPr + '<w:t xml:space="preserve">' + xmlEsc(text) + '</w:t></w:r>';
-}
-
-function paraXml(text, o) {
-  o = o || {};
-  const pPr = '<w:pPr>' +
-    (o.align ? '<w:jc w:val="' + o.align + '"/>' : '') +
-    (o.bullet ? '<w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>' : '') +
-    '<w:spacing w:before="' + (o.before || 0) + '" w:after="' + (o.after === undefined ? 120 : o.after) + '" w:line="264" w:lineRule="auto"/>' +
-    (o.shade ? '<w:shd w:val="clear" w:color="auto" w:fill="' + o.shade + '"/>' : '') +
-    (o.border ? '<w:pBdr><w:top w:val="single" w:sz="6" w:color="' + o.border + '"/><w:left w:val="single" w:sz="6" w:color="' + o.border + '"/><w:bottom w:val="single" w:sz="6" w:color="' + o.border + '"/><w:right w:val="single" w:sz="6" w:color="' + o.border + '"/></w:pBdr>' : '') +
-    '</w:pPr>';
-  return '<w:p>' + pPr + (text === '' ? '' : runXml(text, o)) + '</w:p>';
-}
-
-// --- Tableau Word natif (pour les jalons de facturation) ---
-function cellXml(text, o, w) {
-  o = o || {};
-  return '<w:tc><w:tcPr><w:tcW w:w="' + w + '" w:type="dxa"/>' +
-    (o.shade ? '<w:shd w:val="clear" w:color="auto" w:fill="' + o.shade + '"/>' : '') +
-    '<w:vAlign w:val="center"/></w:tcPr>' +
-    paraXml(text, { size: o.size || 19, bold: o.bold, color: o.color || '14202E',
-                    align: o.align, after: 40 }) + '</w:tc>';
-}
-
-function tableXml(widths, rows) {
-  const bords = ['top','left','bottom','right','insideH','insideV']
-    .map(b => '<w:' + b + ' w:val="single" w:sz="4" w:color="E1E8F0"/>').join('');
-  const tblPr = '<w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders>' + bords + '</w:tblBorders>' +
-    '<w:tblCellMar><w:top w:w="60" w:type="dxa"/><w:left w:w="90" w:type="dxa"/>' +
-    '<w:bottom w:w="60" w:type="dxa"/><w:right w:w="90" w:type="dxa"/></w:tblCellMar></w:tblPr>';
-  const grid = '<w:tblGrid>' + widths.map(w => '<w:gridCol w:w="' + w + '"/>').join('') + '</w:tblGrid>';
-  const corps = rows.map(function (r) {
-    return '<w:tr>' + r.cells.map(function (c, i) {
-      return cellXml(c.text, {
-        bold: r.header || c.bold,
-        shade: r.header ? '0D3B66' : (r.zebra ? 'F5F8FC' : null),
-        color: r.header ? 'FFFFFF' : '14202E',
-        align: c.align, size: r.header ? 17 : 19
-      }, widths[i]);
-    }).join('') + '</w:tr>';
-  }).join('');
-  // Word exige un paragraphe apres un tableau
-  return '<w:tbl>' + tblPr + grid + corps + '</w:tbl>' + paraXml('', { after: 80 });
-}
-
-function buildDocumentXml(d, lang) {
-  const NAVY='0D3B66', ACCENT='2A78D6', AMBER='B5590B', GREEN='1B7A3D', RED='A8322A', INK='14202E', MUTED='5B6B7C';
-
-  // Les champs redactionnels arrivent sous la forme { fr, en } : on extrait
-  // la langue demandee, avec repli sur l'autre si elle manque.
-  const pick = (o) => (o && typeof o === 'object' && !Array.isArray(o)) ? (o[lang] || o.fr || o.en || '') : (o || '');
-  const pickA = (o) => (o && typeof o === 'object' && !Array.isArray(o)) ? (o[lang] || o.fr || o.en || []) : (Array.isArray(o) ? o : []);
-
-  const L = (lang === 'en')
-    ? { title:'Upwork job analysis', on:'Analysis of ', yes:'Application recommended', no:'Application not recommended', nd:'N/A',
-        p1:'1. Job summary', p2:'2. Compatibility analysis', p3:'3. Suggested contract strategy', p_letter:'4. Cover letter (English, ready to paste)',
-        f_cat:'Category', f_scope:'Scope', f_budget:'Budget', f_loc:'Location', f_link:'Link',
-        s_skills:'Required skills', s_deliv:'Expected deliverables', s_client:'Client profile and competition',
-        s_watch:'Points to watch', s_pos:'Positive points', s_tech:'Technical fit', s_odds:'Realistic odds of being hired',
-        s_cv:'Profile extracted from CV', s_str:'Strengths of the application', s_addr:'Points to address',
-        s_reco:'Recommendation', s_notes:'Usage notes',
-        c_type:'Recommended contract type', c_rate:'Pricing note', c_mil:'Billing milestones',
-        th_num:'No', th_lab:'Label', th_desc:'Description', th_due:'Due', th_amt:'Amount', c_total:'Total' }
-    : { title:"Analyse d\u2019offre Upwork", on:'Analyse du ', yes:'Candidature recommand\u00e9e', no:'Candidature d\u00e9conseill\u00e9e', nd:'N/D',
-        p1:"1. R\u00e9sum\u00e9 de l\u2019offre", p2:'2. Analyse de compatibilit\u00e9', p3:'3. Strat\u00e9gie de contrat sugg\u00e9r\u00e9e', p_letter:'4. Lettre de motivation (anglais, pr\u00eate \u00e0 copier-coller)',
-        f_cat:'Cat\u00e9gorie', f_scope:'Port\u00e9e', f_budget:'Budget', f_loc:'Localisation', f_link:'Lien',
-        s_skills:'Comp\u00e9tences requises', s_deliv:'Livrables attendus', s_client:'Profil client et concurrence',
-        s_watch:"Points d\u2019attention", s_pos:'Points positifs', s_tech:'Ad\u00e9quation technique', s_odds:"Chances r\u00e9elles d\u2019\u00eatre retenu",
-        s_cv:'Profil extrait du CV', s_str:'Points forts de la candidature', s_addr:'Points \u00e0 adresser',
-        s_reco:'Recommandation', s_notes:"Notes d\u2019usage",
-        c_type:'Type de contrat recommand\u00e9', c_rate:'Note tarifaire', c_mil:'Jalons de facturation',
-        th_num:'N', th_lab:'Libell\u00e9', th_desc:'Description', th_due:'\u00c9ch\u00e9ance', th_amt:'Montant', c_total:'Total' };
-
-  const o = d.offre || {};
-  const st = (typeof d.score_technique === 'number') ? d.score_technique : null;
-  const sc = (typeof d.score_chances === 'number') ? d.score_chances : null;
-  const coul = (s) => s === null ? MUTED : (s >= 70 ? GREEN : (s >= 50 ? AMBER : RED));
-  const verdict = d.postuler === true ? L.yes : (d.postuler === false ? L.no : '');
-  let dateStr = '';
-  try {
-    dateStr = new Date(d.submitted_at || Date.now())
-      .toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR', { day:'2-digit', month:'long', year:'numeric' });
-  } catch (e) {}
-
-  const titrePartie = (t) => paraXml(t, { bold:true, color:NAVY, size:28, before:280, after:140 });
-  const section = (t, c) => paraXml(t, { bold:true, caps:true, color:c, size:18, before:160, after:60 });
-  const champ = (lab, val) => val ? paraXml(lab + ' : ' + val, { size:21, color:INK, after:60 }) : '';
-  const puces = (a) => (a || []).map(x => paraXml(x, { size:21, color:INK, bullet:true, after:80 })).join('');
-
-  let body = '';
-  body += paraXml('UPWORK \u00d7 DATA/BI', { bold:true, color:NAVY, size:20, after:40 });
-  body += paraXml(L.title, { bold:true, color:NAVY, size:36, after:40 });
-  body += paraXml(d.job_title || '', { bold:true, color:INK, size:26, after:40 });
-  if (dateStr) body += paraXml(L.on + dateStr + (d.freelance_name ? ' \u2014 ' + d.freelance_name : ''), { color:MUTED, size:18, after:200 });
-
-  // --- Partie 1 ---
-  body += titrePartie(L.p1);
-  body += champ(L.f_cat, pick(o.categorie));
-  body += champ(L.f_scope, pick(o.portee));
-  body += champ(L.f_budget, o.budget);
-  body += champ(L.f_loc, o.localisation);
-  body += champ(L.f_link, d.job_url);
-  if (pickA(o.competences_requises).length) { body += section(L.s_skills, ACCENT); body += puces(pickA(o.competences_requises)); }
-  if (pickA(o.livrables).length) { body += section(L.s_deliv, ACCENT); body += puces(pickA(o.livrables)); }
-  if (pickA(o.profil_client).length) { body += section(L.s_client, ACCENT); body += puces(pickA(o.profil_client)); }
-  if (pickA(d.points_attention).length) { body += section(L.s_watch, AMBER); body += puces(pickA(d.points_attention)); }
-  if (pickA(d.points_positifs).length) { body += section(L.s_pos, GREEN); body += puces(pickA(d.points_positifs)); }
-
-  // --- Partie 2 ---
-  body += titrePartie(L.p2);
-  body += paraXml(L.s_tech + ' : ' + (st === null ? L.nd : st + ' %'),
-                  { bold:true, color:coul(st), size:26, after:60, shade:'F5F8FC', border:coul(st), align:'center' });
-  body += paraXml(L.s_odds + ' : ' + (sc === null ? L.nd : sc + ' %') + (verdict ? '  \u2022  ' + verdict : ''),
-                  { bold:true, color:coul(sc), size:26, after:120, shade:'F5F8FC', border:coul(sc), align:'center' });
-  if (pick(d.score_justification)) body += paraXml(pick(d.score_justification), { size:21, color:INK, after:180 });
-  if (pick(d.profil_cv)) { body += section(L.s_cv, ACCENT); body += paraXml(pick(d.profil_cv), { size:21, color:INK, after:180 }); }
-  if (pickA(d.points_forts).length) { body += section(L.s_str, GREEN); body += puces(pickA(d.points_forts)); }
-  if (pickA(d.points_a_adresser).length) { body += section(L.s_addr, AMBER); body += puces(pickA(d.points_a_adresser)); }
-  if (pick(d.recommandation)) {
-    body += section(L.s_reco, NAVY);
-    body += paraXml(pick(d.recommandation), { bold:true, size:22, color:INK, after:200, shade:'F5F8FC', border:'E1E8F0' });
-  }
-
-  // --- Partie 3 : strategie de contrat ---
-  const s = d.strategie_contrat || {};
-  if (pick(s.type_recommande) || (s.jalons && s.jalons.length)) {
-    body += titrePartie(L.p3);
-    if (pick(s.type_recommande)) {
-      body += paraXml(L.c_type + ' : ' + pick(s.type_recommande),
-                      { bold:true, size:22, color:NAVY, after:100, shade:'F5F8FC', border:NAVY });
-    }
-    if (pick(s.justification)) body += paraXml(pick(s.justification), { size:21, color:INK, after:140 });
-    if (pick(s.note_tarifaire)) {
-      body += section(L.c_rate, AMBER);
-      body += paraXml(pick(s.note_tarifaire), { size:21, color:INK, after:160, shade:'FDF6EE', border:AMBER });
-    }
-    if (s.jalons && s.jalons.length) {
-      body += section(L.c_mil, ACCENT);
-      const largeurs = [560, 1900, 4180, 1180, 1380];
-      const lignes = [{ header:true, cells:[
-        { text:L.th_num }, { text:L.th_lab }, { text:L.th_desc },
-        { text:L.th_due }, { text:L.th_amt, align:'right' }] }];
-      s.jalons.forEach(function (j, i) {
-        lignes.push({ zebra: (i % 2 === 1), cells: [
-          { text:String(j.numero || (i+1)) },
-          { text:pick(j.libelle), bold:true },
-          { text:pick(j.description) },
-          { text:j.echeance || '' },
-          { text:j.montant || '', align:'right', bold:true }] });
-      });
-      body += tableXml(largeurs, lignes);
-    }
-    if (s.total) body += paraXml(L.c_total + ' : ' + s.total, { bold:true, size:23, color:NAVY, align:'right', after:180 });
-  }
-
-  // --- Partie 4 : lettre (toujours en anglais) ---
-  if (d.lettre_motivation) {
-    body += titrePartie(L.p_letter);
-    String(d.lettre_motivation).split(/\n+/).forEach(function (par) {
-      if (par.trim()) body += paraXml(par.trim(), { size:21, color:INK, after:140 });
-    });
-  }
-  if (pickA(d.notes_usage).length) { body += section(L.s_notes, MUTED); body += puces(pickA(d.notes_usage)); }
-
-  body += paraXml('Iri\u00e9 Armand Davy TRE BI  \u2022  Data Analyst', { color:MUTED, size:17, align:'center', before:240 });
-
-  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>' + body +
-    '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="709" w:footer="709" w:gutter="0"/></w:sectPr>' +
-    '</w:body></w:document>';
-}
-
-const DOCX_CONTENT_TYPES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-  '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
-  '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
-  '<Default Extension="xml" ContentType="application/xml"/>' +
-  '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
-  '<Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>' +
-  '</Types>';
-const DOCX_ROOT_RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-  '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
-  '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
-  '</Relationships>';
-const DOCX_DOC_RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-  '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
-  '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>' +
-  '</Relationships>';
-const DOCX_NUMBERING = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-  '<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
-  '<w:abstractNum w:abstractNumId="0"><w:lvl w:ilvl="0"><w:start w:val="1"/><w:numFmt w:val="bullet"/><w:lvlText w:val="\u2022"/>' +
-  '<w:lvlJc w:val="left"/><w:pPr><w:ind w:left="360" w:hanging="360"/></w:pPr>' +
-  '<w:rPr><w:rFonts w:ascii="Symbol" w:hAnsi="Symbol" w:hint="default"/></w:rPr></w:lvl></w:abstractNum>' +
-  '<w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num></w:numbering>';
-
-function buildDocxBlob(d, lang) {
-  if (typeof JSZip === 'undefined') throw new Error('JSZip indisponible');
-  const zip = new JSZip();
-  zip.file('[Content_Types].xml', DOCX_CONTENT_TYPES);
-  zip.folder('_rels').file('.rels', DOCX_ROOT_RELS);
-  const w = zip.folder('word');
-  w.file('document.xml', buildDocumentXml(d, lang));
-  w.file('numbering.xml', DOCX_NUMBERING);
-  w.folder('_rels').file('document.xml.rels', DOCX_DOC_RELS);
-  return zip.generateAsync({
-    type: 'blob',
-    mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-  });
-}
-
 function triggerDownloads(onDone) {
-  if (!reportData || !reportData.report_html_fr) { if (onDone) onDone(false); return; }
+  if (!reportData || !reportData.report_html) { if (onDone) onDone(false); return; }
   const base = slugify(reportData.job_title);
 
   // Quatre livrables : rapport HTML et Word, en francais et en anglais.
-  const fichiers = [
-    { cle: 'fileHtmlFr', nom: 'Analyse_' + base + '_FR.html', type: 'html', lang: 'fr' },
-    { cle: 'fileHtmlEn', nom: 'Analysis_' + base + '_EN.html', type: 'html', lang: 'en' },
-    { cle: 'fileDocxFr', nom: 'Analyse_' + base + '_FR.docx', type: 'docx', lang: 'fr' },
-    { cle: 'fileDocxEn', nom: 'Analysis_' + base + '_EN.docx', type: 'docx', lang: 'en' }
-  ];
+  // Un seul document, dans la langue choisie par le client.
+  const langDoc = reportData.lang === 'fr' ? 'fr' : 'en';
+  const fichiers = [{
+    cle: langDoc === 'fr' ? 'fileHtmlFr' : 'fileHtmlEn',
+    nom: (langDoc === 'fr' ? 'Analyse_' : 'Analysis_') + base + '.html',
+    lang: langDoc
+  }];
 
   const prets = [];
 
-  function construire(f) {
-    if (f.type === 'html') {
-      const src = f.lang === 'fr' ? reportData.report_html_fr : reportData.report_html_en;
-      return Promise.resolve(new Blob([src], { type: 'text/html;charset=utf-8' }));
-    }
-    return buildDocxBlob(reportData, f.lang);
+  function construire() {
+    return Promise.resolve(new Blob([reportData.report_html], { type: 'text/html;charset=utf-8' }));
   }
 
   // Construction sequentielle, puis telechargements espaces : les navigateurs
@@ -1055,7 +817,7 @@ function triggerDownloads(onDone) {
   let chaine = Promise.resolve();
   fichiers.forEach(function (f) {
     chaine = chaine.then(function () {
-      return construire(f).then(function (blob) {
+      return construire().then(function (blob) {
         prets.push({ f: f, blob: blob, url: URL.createObjectURL(blob) });
       }).catch(function () { /* un format en echec n'empeche pas les autres */ });
     });
@@ -1320,7 +1082,7 @@ if (!paidPlanFromUrl || sameTabResume) {
     let data = {};
     try { data = await res.json(); } catch (e) { data = {}; }
 
-    if (!res.ok || data.success === false || !data.report_html_fr) {
+    if (!res.ok || data.success === false || !data.report_html) {
       analyseEnCours = false;
       prgArreter();
       document.getElementById('confirm-paid-btn').classList.remove('btn-disabled');
@@ -1334,8 +1096,8 @@ if (!paidPlanFromUrl || sameTabResume) {
     prgEtapeFichiers();
 
     reportData = {
-      report_html_fr: data.report_html_fr,
-      report_html_en: data.report_html_en,
+      report_html: data.report_html,
+      lang: data.lang || currentLang,
       job_title: data.job_title || pendingRequest.job_title,
       plan: pendingRequest.plan,
       freelance_name: data.freelance_name || pendingRequest.freelance_name,
@@ -1362,10 +1124,10 @@ if (!paidPlanFromUrl || sameTabResume) {
     const restants = (typeof data.jours_restants === 'number')
       ? ' ' + data.jours_restants + t().subDaysLeft : '';
 
-    triggerDownloads(function (docxOk) {
+    triggerDownloads(function (ok) {
       prgTerminer();
-      waitingNote.className = 'result-note show ' + (docxOk ? 'ok' : 'err');
-      waitingNote.textContent = (docxOk ? t().downloadDone : t().docxFailed) + restants;
+      waitingNote.className = 'result-note show ' + (ok ? 'ok' : 'err');
+      waitingNote.textContent = (ok ? t().downloadDone : t().statusServerErr) + restants;
     });
   }
 
