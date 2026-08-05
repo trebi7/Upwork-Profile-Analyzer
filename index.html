@@ -205,10 +205,10 @@
           <button type="button" class="btn" data-plan="tache" data-i18n="planChooseBtn">Choisir cette formule</button>
         </div>
         <div class="plan-card">
-          <span class="ptag" data-i18n="planSubTag">Abonnement</span>
-          <h3 data-i18n="planSubTitle">Accès mensuel</h3>
+          <span class="ptag" data-i18n="planSubTag">Accès 30 jours</span>
+          <h3 data-i18n="planSubTitle">Analyses illimitées</h3>
           <p class="price" data-i18n="planSubPrice">5 000 FCFA</p>
-          <p class="desc" data-i18n="planSubDesc">Analyses illimitées pendant 30 jours. Pour ceux qui postulent régulièrement et veulent trier avant de dépenser un connect.</p>
+          <p class="desc" data-i18n="planSubDesc">Analysez autant d'offres que vous voulez pendant 30 jours. Paiement unique, sans reconduction automatique.</p>
           <button type="button" class="btn" data-plan="abonnement" data-i18n="planChooseBtn">Choisir cette formule</button>
         </div>
       </div>
@@ -291,7 +291,7 @@
           <a class="btn" id="chariow-pay-link" href="#" target="_blank" rel="noopener" data-i18n="payNowBtn">Payer sur Chariow →</a>
           <div id="waiting-note" class="result-note pending" role="status" aria-live="polite"></div>
           <br>
-          <button type="button" class="btn-ghost-fallback" id="confirm-paid-btn" data-i18n="confirmPaidBtn">Déjà payé et rien ne se passe ? Télécharger manuellement</button>
+          <button type="button" class="btn btn-primary" id="confirm-paid-btn" data-i18n="confirmPaidBtn">J'ai payé sur Chariow — lancer mon analyse →</button>
         </div>
       </div>
     </section>
@@ -358,8 +358,8 @@ const translations = {
     sub: "Choisis ta formule. Tu ne paies qu'au téléchargement, une fois ton analyse prête.",
     planTaskTag: "À la tâche", planTaskTitle: "Analyse ponctuelle", planTaskPrice: "3 000 FCFA",
     planTaskDesc: "Une offre analysée : double score, signaux d'alerte, stratégie de contrat avec jalons, et lettre de motivation prête à envoyer.",
-    planSubTag: "Abonnement", planSubTitle: "Accès mensuel", planSubPrice: "5 000 FCFA",
-    planSubDesc: "Analyses illimitées pendant 30 jours. Pour ceux qui postulent régulièrement et veulent trier avant de dépenser un connect.",
+    planSubTag: "Accès 30 jours", planSubTitle: "Analyses illimitées", planSubPrice: "5 000 FCFA",
+    planSubDesc: "Analysez autant d'offres que vous voulez pendant 30 jours. Paiement unique, sans reconduction automatique.",
     planChooseBtn: "Choisir cette formule",
     recapPrefix: "Formule choisie : ",
     changePlanBtn: "Changer de formule",
@@ -378,7 +378,7 @@ const translations = {
     submitBtnBusy: "Analyse en cours…",
     resultMeta: "Formats : Word (.docx) et HTML",
     revealPaymentBtn: "Télécharger mes résultats →",
-    payToDownload: "Le règlement se fait sur Chariow, dans un nouvel onglet. Une fois payé, reviens ici : ton analyse se lance automatiquement, puis le téléchargement démarre.",
+    payToDownload: "Le règlement se fait sur Chariow, dans un nouvel onglet. Une fois payé, reviens sur cet onglet et clique sur le bouton ci-dessous pour lancer ton analyse.",
     analysisRunning: "Paiement confirmé. Analyse en cours (jusqu'à une minute) — ne ferme pas cette page.",
     readyTitle: "Analyse prête à débloquer",
     readyMeta: "Formats livrés : Word (.docx) et HTML",
@@ -388,7 +388,7 @@ const translations = {
     lostRequest: "Ta demande n'a pas pu être retrouvée. Reprends le formulaire depuis le début — ton paiement reste valable.",
     subDaysLeft: " jour(s) restant(s) sur ton abonnement.",
     payNowBtn: "Payer sur Chariow →",
-    confirmPaidBtn: "Déjà payé et rien ne se passe ? Télécharger manuellement",
+    confirmPaidBtn: "J'ai payé sur Chariow — lancer mon analyse →",
     waitingNote: "En attente de la confirmation du paiement…",
     downloadDone: "Téléchargement lancé. Vérifie le dossier de téléchargements de ton navigateur.",
     docxFailed: "Le fichier HTML a été téléchargé. La version Word n'a pas pu être générée sur ce navigateur — ouvre le HTML puis enregistre-le en Word depuis ton traitement de texte.",
@@ -405,7 +405,7 @@ const translations = {
     statusNetworkErr: "Impossible de joindre le service d'analyse. Vérifie ta connexion et réessaie.",
     statusServerErr: "Le service d'analyse a rencontré une erreur. Réessaie dans quelques minutes.",
     planTacheLabel: "À la tâche — 3 000 FCFA",
-    planAbonnementLabel: "Abonnement — 5 000 FCFA",
+    planAbonnementLabel: "Accès 30 jours — 5 000 FCFA",
     paidPageTitle: "Paiement confirmé",
     paidPageBody: "Tu peux fermer cet onglet et retourner sur celui où tu as lancé ton analyse — le téléchargement va démarrer automatiquement.",
     paidPageBodySameTab: "Ton téléchargement démarre dans un instant…"
@@ -420,8 +420,8 @@ const translations = {
     sub: "Choose your plan. You only pay at download, once your analysis is ready.",
     planTaskTag: "Per task", planTaskTitle: "One-time analysis", planTaskPrice: "$5",
     planTaskDesc: "One job analyzed: dual score, red flags, contract strategy with milestones, and a ready-to-send cover letter.",
-    planSubTag: "Subscription", planSubTitle: "Monthly access", planSubPrice: "$9",
-    planSubDesc: "Unlimited analyses for 30 days. For freelancers who apply often and want to filter before spending a connect.",
+    planSubTag: "30-day access", planSubTitle: "Unlimited analyses", planSubPrice: "$9",
+    planSubDesc: "Analyze as many jobs as you want for 30 days. One-time payment, no automatic renewal.",
     planChooseBtn: "Choose this plan",
     recapPrefix: "Selected plan: ",
     changePlanBtn: "Change plan",
@@ -440,7 +440,7 @@ const translations = {
     submitBtnBusy: "Analyzing…",
     resultMeta: "Formats: Word (.docx) and HTML",
     revealPaymentBtn: "Download my results →",
-    payToDownload: "Payment happens on Chariow, in a new tab. Once paid, come back here: your analysis runs automatically, then the download starts.",
+    payToDownload: "Payment happens on Chariow, in a new tab. Once paid, come back to this tab and click the button below to start your analysis.",
     analysisRunning: "Payment confirmed. Analyzing (up to a minute) — don't close this page.",
     readyTitle: "Analysis ready to unlock",
     readyMeta: "Delivered formats: Word (.docx) and HTML",
@@ -450,7 +450,7 @@ const translations = {
     lostRequest: "Your request could not be recovered. Please start the form again — your payment is still valid.",
     subDaysLeft: " day(s) left on your subscription.",
     payNowBtn: "Pay on Chariow →",
-    confirmPaidBtn: "Already paid and nothing happening? Download manually",
+    confirmPaidBtn: "I've paid on Chariow — start my analysis →",
     waitingNote: "Waiting for payment confirmation…",
     downloadDone: "Download started. Check your browser's downloads folder.",
     docxFailed: "The HTML file was downloaded. The Word version could not be generated on this browser — open the HTML and save it as Word from your word processor.",
@@ -467,7 +467,7 @@ const translations = {
     statusNetworkErr: "Could not reach the analysis service. Check your connection and try again.",
     statusServerErr: "The analysis service hit an error. Please try again in a few minutes.",
     planTacheLabel: "Per task — $5",
-    planAbonnementLabel: "Subscription — $9",
+    planAbonnementLabel: "30-day access — $9",
     paidPageTitle: "Payment confirmed",
     paidPageBody: "You can close this tab and go back to the one where you started your analysis — the download will start automatically.",
     paidPageBodySameTab: "Your download is starting…"
@@ -721,6 +721,7 @@ let reportData = null;      // rapport recu APRES paiement verifie
 let pendingRequest = null;  // demande en attente de paiement (jamais envoyee avant)
 let paymentPollInterval = null;
 let selectedFileName = null;
+let analyseEnCours = false;  // verrou : empeche plusieurs analyses simultanees
 
 /* ===================================================================
    UTILITAIRES
@@ -1188,12 +1189,19 @@ if (!paidPlanFromUrl || sameTabResume) {
   // aupres de Chariow avant de lancer la moindre analyse.
   // ------------------------------------------------------------------
   async function lancerAnalyse() {
+    // Un seul clic peut declencher plusieurs appels (bouton reessayer +
+    // sondage du signal de paiement). Sans ce verrou, plusieurs analyses
+    // partaient en parallele : autant de credits consommes et d'appels
+    // API factures pour une seule demande.
+    if (analyseEnCours) return;
     if (!pendingRequest) {
       waitingNote.className = 'result-note show err';
       waitingNote.textContent = t().lostRequest;
       return;
     }
 
+    analyseEnCours = true;
+    if (paymentPollInterval) { clearInterval(paymentPollInterval); paymentPollInterval = null; }
     waitingNote.className = 'result-note show pending';
     waitingNote.innerHTML = '<span class="spinner"></span>' + t().analysisRunning;
     document.getElementById('reveal-payment-btn').style.display = 'none';
@@ -1202,6 +1210,7 @@ if (!paidPlanFromUrl || sameTabResume) {
     try {
       res = await postWebhook(pendingRequest);
     } catch (err) {
+      analyseEnCours = false;
       waitingNote.className = 'result-note show err';
       waitingNote.textContent = t().statusNetworkErr;
       afficherBoutonReessayer();
@@ -1212,11 +1221,14 @@ if (!paidPlanFromUrl || sameTabResume) {
     try { data = await res.json(); } catch (e) { data = {}; }
 
     if (!res.ok || data.success === false || !data.report_html) {
+      analyseEnCours = false;
       waitingNote.className = 'result-note show err';
       waitingNote.textContent = data.message || t().statusServerErr;
       afficherBoutonReessayer();
       return;
     }
+
+    analyseEnCours = false;
 
     reportData = {
       report_html: data.report_html,
@@ -1253,10 +1265,14 @@ if (!paidPlanFromUrl || sameTabResume) {
   }
 
   function afficherBoutonReessayer() {
-    const btn = document.getElementById('reveal-payment-btn');
+    const ancien = document.getElementById('reveal-payment-btn');
+    // Clonage : supprime d'un coup tous les gestionnaires precedents,
+    // sinon un clic declenchait a la fois l'ancien et le nouveau.
+    const btn = ancien.cloneNode(true);
+    ancien.parentNode.replaceChild(btn, ancien);
     btn.style.display = '';
     btn.textContent = t().retryPayment;
-    btn.onclick = function () { lancerAnalyse(); };
+    btn.addEventListener('click', function () { lancerAnalyse(); });
   }
 
   /* --- Paiement / telechargement --- */
@@ -1281,18 +1297,24 @@ if (!paidPlanFromUrl || sameTabResume) {
   document.getElementById('reveal-payment-btn').addEventListener('click', function () {
     document.getElementById('chariow-pay-link').href = CHARIOW_LINKS[selectedPlan] || CHARIOW_LINKS.tache;
     document.getElementById('payment-area').classList.add('show');
-    waitingNote.className = 'result-note show pending';
-    waitingNote.innerHTML = '<span class="spinner"></span>' + t().waitingNote;
+    waitingNote.className = 'result-note';
+    waitingNote.textContent = '';
 
+    // La redirection automatique Chariow reste geree ici si jamais elle
+    // redevient disponible (Chariow empeche actuellement d'activer a la
+    // fois l'URL de redirection ET le message de livraison, qui est
+    // obligatoire pour publier). Ce sondage ne se declenchera donc pas en
+    // pratique : c'est le bouton ci-dessous qui fait tout le travail.
     checkPaymentSignal();
     if (paymentPollInterval) clearInterval(paymentPollInterval);
     paymentPollInterval = setInterval(checkPaymentSignal, 1500);
   });
 
-  // Filet de secours : si la detection automatique echoue (onglet ferme,
-  // redirection ratee), le client force la verification. Aucun risque :
-  // c'est le serveur qui controle le paiement aupres de Chariow.
+  // Action principale : le client clique ici en revenant de Chariow.
+  // Aucun risque a se fier a un simple clic : c'est le serveur qui
+  // controle reellement le paiement auprès de Chariow avant d'analyser.
   document.getElementById('confirm-paid-btn').addEventListener('click', function () {
+    if (analyseEnCours) return;
     if (reportData) { triggerDownloads(function () {}); return; }
     lancerAnalyse();
   });
