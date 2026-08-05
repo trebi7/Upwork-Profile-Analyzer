@@ -120,6 +120,31 @@
     border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:-2px;}
   @keyframes spin{to{transform:rotate(360deg);}}
 
+  .progress-wrap{margin-top:18px;display:none;text-align:left;}
+  .progress-wrap.show{display:block;}
+  .progress-track{height:8px;background:var(--border);border-radius:999px;overflow:hidden;}
+  .progress-fill{height:100%;width:0;background:var(--accent);border-radius:999px;
+    transition:width .5s ease;}
+  .progress-fill.done{background:var(--green);}
+  .progress-label{display:flex;justify-content:space-between;gap:12px;margin-top:9px;
+    font-size:12.5px;color:var(--muted);}
+  .progress-label b{color:var(--navy);font-weight:600;}
+  .progress-steps{margin-top:12px;font-size:12.5px;color:var(--muted);line-height:1.9;}
+  .progress-steps div{display:flex;align-items:center;gap:8px;}
+  .progress-steps .dot{width:14px;text-align:center;color:var(--border);}
+  .progress-steps .en-cours .dot{color:var(--accent);}
+  .progress-steps .en-cours{color:var(--navy);font-weight:600;}
+  .progress-steps .fait .dot{color:var(--green);}
+  .progress-steps .fait{color:var(--ink);}
+  .files-list{margin-top:16px;display:none;text-align:left;}
+  .files-list.show{display:block;}
+  .files-list a{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;
+    margin-bottom:7px;font-size:13px;color:var(--navy);text-decoration:none;font-weight:600;}
+  .files-list a:hover{border-color:var(--accent);}
+  .files-list a span{font-weight:400;color:var(--muted);font-size:11.5px;}
+  .btn-disabled{background:var(--muted) !important;cursor:not-allowed !important;
+    opacity:.55;transform:none !important;pointer-events:none;}
   .result-box{border:1px solid var(--border);border-radius:var(--radius);padding:26px;background:var(--paper);text-align:center;}
   .result-box .file-title{font-family:'Space Grotesk',sans-serif;font-size:18px;color:var(--navy);font-weight:600;margin:0 0 6px;word-break:break-word;}
   .result-box .file-meta{font-size:12.5px;color:var(--muted);margin:0 0 20px;}
@@ -291,7 +316,17 @@
           <a class="btn" id="chariow-pay-link" href="#" target="_blank" rel="noopener" data-i18n="payNowBtn">Payer sur Chariow →</a>
           <div id="waiting-note" class="result-note pending" role="status" aria-live="polite"></div>
           <br>
-          <button type="button" class="btn btn-primary" id="confirm-paid-btn" data-i18n="confirmPaidBtn">J'ai payé sur Chariow — lancer mon analyse →</button>
+          <button type="button" class="btn btn-primary" id="confirm-paid-btn" style="display:none;" data-i18n="confirmPaidBtn">J'ai payé sur Chariow — lancer mon analyse →</button>
+
+          <div class="progress-wrap" id="progress-wrap">
+            <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+            <div class="progress-label">
+              <b id="progress-step-label"></b><span id="progress-pct">0 %</span>
+            </div>
+            <div class="progress-steps" id="progress-steps"></div>
+          </div>
+
+          <div class="files-list" id="files-list"></div>
         </div>
       </div>
     </section>
@@ -350,6 +385,15 @@ const LS_PENDING_REQUEST = 'upwork_pending_request';
 const translations = {
   fr: {
     tagline: "Zéro connect gaspillé",
+    prg1: "Vérification du paiement", prg2: "Lecture du CV et de l'offre",
+    prg3: "Analyse et rédaction du rapport", prg4: "Génération des fichiers", prg5: "Téléchargement",
+    prgLong: "L'analyse complète prend en général une à deux minutes. Ne ferme pas cette page.",
+    filesTitle: "Vos fichiers",
+    fileHtmlFr: "Rapport HTML — français", fileHtmlEn: "Rapport HTML — anglais",
+    fileDocxFr: "Rapport Word — français", fileDocxEn: "Rapport Word — anglais",
+    fileHint: "cliquez pour télécharger à nouveau",
+    payDone: "Paiement confirmé",
+    payFirst: "Réglez d'abord sur Chariow, puis revenez ici par le lien reçu.",
     sampleTitle: "Voir un exemple d'analyse complète (celle que je me fais à moi-même)",
     sampleIntro: "Voici une analyse réelle, produite par ce même service sur une offre Power BI à laquelle j'ai postulé. C'est exactement le document que vous recevez, en Word et en HTML. Rien n'a été retouché.", sampleCta: "C'est ce niveau de détail que vous recevez pour chaque offre analysée.",
     step1: "01 — Formule", step2: "02 — Profil et offre", step3: "03 — Paiement et résultat",
@@ -412,6 +456,15 @@ const translations = {
   },
   en: {
     tagline: "No wasted connects",
+    prg1: "Checking payment", prg2: "Reading CV and job posting",
+    prg3: "Analysis and report writing", prg4: "Generating files", prg5: "Downloading",
+    prgLong: "A full analysis usually takes one to two minutes. Please don't close this page.",
+    filesTitle: "Your files",
+    fileHtmlFr: "HTML report — French", fileHtmlEn: "HTML report — English",
+    fileDocxFr: "Word report — French", fileDocxEn: "Word report — English",
+    fileHint: "click to download again",
+    payDone: "Payment confirmed",
+    payFirst: "Pay on Chariow first, then come back here using the link you receive.",
     sampleTitle: "See a full sample analysis (the one I run on myself)",
     sampleIntro: "This is a real analysis, produced by this same service on a Power BI job I applied to. It is exactly the document you receive, in Word and HTML. Nothing has been edited.", sampleCta: "This is the level of detail you get for every job analyzed.",
     step1: "01 — Plan", step2: "02 — Profile and job", step3: "03 — Payment and result",
@@ -813,27 +866,31 @@ function tableXml(widths, rows) {
 
 function buildDocumentXml(d, lang) {
   const NAVY='0D3B66', ACCENT='2A78D6', AMBER='B5590B', GREEN='1B7A3D', RED='A8322A', INK='14202E', MUTED='5B6B7C';
+
+  // Les champs redactionnels arrivent sous la forme { fr, en } : on extrait
+  // la langue demandee, avec repli sur l'autre si elle manque.
+  const pick = (o) => (o && typeof o === 'object' && !Array.isArray(o)) ? (o[lang] || o.fr || o.en || '') : (o || '');
+  const pickA = (o) => (o && typeof o === 'object' && !Array.isArray(o)) ? (o[lang] || o.fr || o.en || []) : (Array.isArray(o) ? o : []);
+
   const L = (lang === 'en')
-    ? { title:'Upwork job analysis', on:'Analysis of ', yes:'Recommended', no:'Not recommended', nd:'N/A',
-        p1:'1. Job summary', p2:'2. Compatibility analysis', p3:'3. Cover letter (English, ready to paste)',
+    ? { title:'Upwork job analysis', on:'Analysis of ', yes:'Application recommended', no:'Application not recommended', nd:'N/A',
+        p1:'1. Job summary', p2:'2. Compatibility analysis', p3:'3. Suggested contract strategy', p_letter:'4. Cover letter (English, ready to paste)',
         f_cat:'Category', f_scope:'Scope', f_budget:'Budget', f_loc:'Location', f_link:'Link',
         s_skills:'Required skills', s_deliv:'Expected deliverables', s_client:'Client profile and competition',
         s_watch:'Points to watch', s_pos:'Positive points', s_tech:'Technical fit', s_odds:'Realistic odds of being hired',
         s_cv:'Profile extracted from CV', s_str:'Strengths of the application', s_addr:'Points to address',
         s_reco:'Recommendation', s_notes:'Usage notes',
-        p_contract:'3. Suggested contract strategy', p_letter:'4. Cover letter (English, ready to paste)',
         c_type:'Recommended contract type', c_rate:'Pricing note', c_mil:'Billing milestones',
-        th_num:'#', th_lab:'Label', th_desc:'Description', th_due:'Due', th_amt:'Amount', c_total:'Total' }
+        th_num:'No', th_lab:'Label', th_desc:'Description', th_due:'Due', th_amt:'Amount', c_total:'Total' }
     : { title:"Analyse d\u2019offre Upwork", on:'Analyse du ', yes:'Candidature recommand\u00e9e', no:'Candidature d\u00e9conseill\u00e9e', nd:'N/D',
-        p1:"1. R\u00e9sum\u00e9 de l\u2019offre", p2:'2. Analyse de compatibilit\u00e9', p3:'3. Lettre de motivation (anglais, pr\u00eate \u00e0 copier-coller)',
+        p1:"1. R\u00e9sum\u00e9 de l\u2019offre", p2:'2. Analyse de compatibilit\u00e9', p3:'3. Strat\u00e9gie de contrat sugg\u00e9r\u00e9e', p_letter:'4. Lettre de motivation (anglais, pr\u00eate \u00e0 copier-coller)',
         f_cat:'Cat\u00e9gorie', f_scope:'Port\u00e9e', f_budget:'Budget', f_loc:'Localisation', f_link:'Lien',
         s_skills:'Comp\u00e9tences requises', s_deliv:'Livrables attendus', s_client:'Profil client et concurrence',
         s_watch:"Points d\u2019attention", s_pos:'Points positifs', s_tech:'Ad\u00e9quation technique', s_odds:"Chances r\u00e9elles d\u2019\u00eatre retenu",
         s_cv:'Profil extrait du CV', s_str:'Points forts de la candidature', s_addr:'Points \u00e0 adresser',
         s_reco:'Recommandation', s_notes:"Notes d\u2019usage",
-        p_contract:'3. Strat\u00e9gie de contrat sugg\u00e9r\u00e9e', p_letter:'4. Lettre de motivation (anglais, pr\u00eate \u00e0 copier-coller)',
         c_type:'Type de contrat recommand\u00e9', c_rate:'Note tarifaire', c_mil:'Jalons de facturation',
-        th_num:'#', th_lab:'Libell\u00e9', th_desc:'Description', th_due:'\u00c9ch\u00e9ance', th_amt:'Montant', c_total:'Total' };
+        th_num:'N', th_lab:'Libell\u00e9', th_desc:'Description', th_due:'\u00c9ch\u00e9ance', th_amt:'Montant', c_total:'Total' };
 
   const o = d.offre || {};
   const st = (typeof d.score_technique === 'number') ? d.score_technique : null;
@@ -849,7 +906,7 @@ function buildDocumentXml(d, lang) {
   const titrePartie = (t) => paraXml(t, { bold:true, color:NAVY, size:28, before:280, after:140 });
   const section = (t, c) => paraXml(t, { bold:true, caps:true, color:c, size:18, before:160, after:60 });
   const champ = (lab, val) => val ? paraXml(lab + ' : ' + val, { size:21, color:INK, after:60 }) : '';
-  const puces = (arr) => (Array.isArray(arr) ? arr : []).map(x => paraXml(x, { size:21, color:INK, bullet:true, after:80 })).join('');
+  const puces = (a) => (a || []).map(x => paraXml(x, { size:21, color:INK, bullet:true, after:80 })).join('');
 
   let body = '';
   body += paraXml('UPWORK \u00d7 DATA/BI', { bold:true, color:NAVY, size:20, after:40 });
@@ -859,16 +916,16 @@ function buildDocumentXml(d, lang) {
 
   // --- Partie 1 ---
   body += titrePartie(L.p1);
-  body += champ(L.f_cat, o.categorie);
-  body += champ(L.f_scope, o.portee);
+  body += champ(L.f_cat, pick(o.categorie));
+  body += champ(L.f_scope, pick(o.portee));
   body += champ(L.f_budget, o.budget);
   body += champ(L.f_loc, o.localisation);
   body += champ(L.f_link, d.job_url);
-  if (o.competences_requises && o.competences_requises.length) { body += section(L.s_skills, ACCENT); body += puces(o.competences_requises); }
-  if (o.livrables && o.livrables.length) { body += section(L.s_deliv, ACCENT); body += puces(o.livrables); }
-  if (o.profil_client && o.profil_client.length) { body += section(L.s_client, ACCENT); body += puces(o.profil_client); }
-  if (d.points_attention && d.points_attention.length) { body += section(L.s_watch, AMBER); body += puces(d.points_attention); }
-  if (d.points_positifs && d.points_positifs.length) { body += section(L.s_pos, GREEN); body += puces(d.points_positifs); }
+  if (pickA(o.competences_requises).length) { body += section(L.s_skills, ACCENT); body += puces(pickA(o.competences_requises)); }
+  if (pickA(o.livrables).length) { body += section(L.s_deliv, ACCENT); body += puces(pickA(o.livrables)); }
+  if (pickA(o.profil_client).length) { body += section(L.s_client, ACCENT); body += puces(pickA(o.profil_client)); }
+  if (pickA(d.points_attention).length) { body += section(L.s_watch, AMBER); body += puces(pickA(d.points_attention)); }
+  if (pickA(d.points_positifs).length) { body += section(L.s_pos, GREEN); body += puces(pickA(d.points_positifs)); }
 
   // --- Partie 2 ---
   body += titrePartie(L.p2);
@@ -876,27 +933,27 @@ function buildDocumentXml(d, lang) {
                   { bold:true, color:coul(st), size:26, after:60, shade:'F5F8FC', border:coul(st), align:'center' });
   body += paraXml(L.s_odds + ' : ' + (sc === null ? L.nd : sc + ' %') + (verdict ? '  \u2022  ' + verdict : ''),
                   { bold:true, color:coul(sc), size:26, after:120, shade:'F5F8FC', border:coul(sc), align:'center' });
-  if (d.score_justification) body += paraXml(d.score_justification, { size:21, color:INK, after:180 });
-  if (d.profil_cv) { body += section(L.s_cv, ACCENT); body += paraXml(d.profil_cv, { size:21, color:INK, after:180 }); }
-  if (d.points_forts && d.points_forts.length) { body += section(L.s_str, GREEN); body += puces(d.points_forts); }
-  if (d.points_a_adresser && d.points_a_adresser.length) { body += section(L.s_addr, AMBER); body += puces(d.points_a_adresser); }
-  if (d.recommandation) {
+  if (pick(d.score_justification)) body += paraXml(pick(d.score_justification), { size:21, color:INK, after:180 });
+  if (pick(d.profil_cv)) { body += section(L.s_cv, ACCENT); body += paraXml(pick(d.profil_cv), { size:21, color:INK, after:180 }); }
+  if (pickA(d.points_forts).length) { body += section(L.s_str, GREEN); body += puces(pickA(d.points_forts)); }
+  if (pickA(d.points_a_adresser).length) { body += section(L.s_addr, AMBER); body += puces(pickA(d.points_a_adresser)); }
+  if (pick(d.recommandation)) {
     body += section(L.s_reco, NAVY);
-    body += paraXml(d.recommandation, { bold:true, size:22, color:INK, after:200, shade:'F5F8FC', border:'E1E8F0' });
+    body += paraXml(pick(d.recommandation), { bold:true, size:22, color:INK, after:200, shade:'F5F8FC', border:'E1E8F0' });
   }
 
   // --- Partie 3 : strategie de contrat ---
   const s = d.strategie_contrat || {};
-  if (s.type_recommande || s.justification || (s.jalons && s.jalons.length)) {
-    body += titrePartie(L.p_contract);
-    if (s.type_recommande) {
-      body += paraXml(L.c_type + ' : ' + s.type_recommande,
+  if (pick(s.type_recommande) || (s.jalons && s.jalons.length)) {
+    body += titrePartie(L.p3);
+    if (pick(s.type_recommande)) {
+      body += paraXml(L.c_type + ' : ' + pick(s.type_recommande),
                       { bold:true, size:22, color:NAVY, after:100, shade:'F5F8FC', border:NAVY });
     }
-    if (s.justification) body += paraXml(s.justification, { size:21, color:INK, after:140 });
-    if (s.note_tarifaire) {
+    if (pick(s.justification)) body += paraXml(pick(s.justification), { size:21, color:INK, after:140 });
+    if (pick(s.note_tarifaire)) {
       body += section(L.c_rate, AMBER);
-      body += paraXml(s.note_tarifaire, { size:21, color:INK, after:160, shade:'FDF6EE', border:AMBER });
+      body += paraXml(pick(s.note_tarifaire), { size:21, color:INK, after:160, shade:'FDF6EE', border:AMBER });
     }
     if (s.jalons && s.jalons.length) {
       body += section(L.c_mil, ACCENT);
@@ -907,26 +964,24 @@ function buildDocumentXml(d, lang) {
       s.jalons.forEach(function (j, i) {
         lignes.push({ zebra: (i % 2 === 1), cells: [
           { text:String(j.numero || (i+1)) },
-          { text:j.libelle || '', bold:true },
-          { text:j.description || '' },
+          { text:pick(j.libelle), bold:true },
+          { text:pick(j.description) },
           { text:j.echeance || '' },
           { text:j.montant || '', align:'right', bold:true }] });
       });
       body += tableXml(largeurs, lignes);
     }
-    if (s.total) {
-      body += paraXml(L.c_total + ' : ' + s.total, { bold:true, size:23, color:NAVY, align:'right', after:180 });
-    }
+    if (s.total) body += paraXml(L.c_total + ' : ' + s.total, { bold:true, size:23, color:NAVY, align:'right', after:180 });
   }
 
-  // --- Partie 4 : lettre de motivation ---
+  // --- Partie 4 : lettre (toujours en anglais) ---
   if (d.lettre_motivation) {
     body += titrePartie(L.p_letter);
     String(d.lettre_motivation).split(/\n+/).forEach(function (par) {
       if (par.trim()) body += paraXml(par.trim(), { size:21, color:INK, after:140 });
     });
   }
-  if (d.notes_usage && d.notes_usage.length) { body += section(L.s_notes, MUTED); body += puces(d.notes_usage); }
+  if (pickA(d.notes_usage).length) { body += section(L.s_notes, MUTED); body += puces(pickA(d.notes_usage)); }
 
   body += paraXml('Iri\u00e9 Armand Davy TRE BI  \u2022  Data Analyst', { color:MUTED, size:17, align:'center', before:240 });
 
@@ -974,31 +1029,68 @@ function buildDocxBlob(d, lang) {
 }
 
 function triggerDownloads(onDone) {
-  if (!reportData || !reportData.report_html) return;
+  if (!reportData || !reportData.report_html_fr) { if (onDone) onDone(false); return; }
   const base = slugify(reportData.job_title);
-  const lang = currentLang;
 
-  saveBlob(new Blob([reportData.report_html], { type: 'text/html;charset=utf-8' }),
-           'Analyse_' + base + '.html');
+  // Quatre livrables : rapport HTML et Word, en francais et en anglais.
+  const fichiers = [
+    { cle: 'fileHtmlFr', nom: 'Analyse_' + base + '_FR.html', type: 'html', lang: 'fr' },
+    { cle: 'fileHtmlEn', nom: 'Analysis_' + base + '_EN.html', type: 'html', lang: 'en' },
+    { cle: 'fileDocxFr', nom: 'Analyse_' + base + '_FR.docx', type: 'docx', lang: 'fr' },
+    { cle: 'fileDocxEn', nom: 'Analysis_' + base + '_EN.docx', type: 'docx', lang: 'en' }
+  ];
 
-  // Les navigateurs bloquent souvent deux telechargements simultanes :
-  // on espace le second.
-  setTimeout(function () {
-    let done = false;
-    const fin = function (ok) {
-      if (done) return;
-      done = true;
-      if (typeof onDone === 'function') onDone(ok);
-    };
-    try {
-      buildDocxBlob(reportData, lang).then(function (blob) {
-        saveBlob(blob, 'Analyse_' + base + '.docx');
-        fin(true);
-      }).catch(function () { fin(false); });
-    } catch (e) {
-      fin(false);
+  const prets = [];
+
+  function construire(f) {
+    if (f.type === 'html') {
+      const src = f.lang === 'fr' ? reportData.report_html_fr : reportData.report_html_en;
+      return Promise.resolve(new Blob([src], { type: 'text/html;charset=utf-8' }));
     }
-  }, 900);
+    return buildDocxBlob(reportData, f.lang);
+  }
+
+  // Construction sequentielle, puis telechargements espaces : les navigateurs
+  // bloquent frequemment plusieurs telechargements simultanes.
+  let chaine = Promise.resolve();
+  fichiers.forEach(function (f) {
+    chaine = chaine.then(function () {
+      return construire(f).then(function (blob) {
+        prets.push({ f: f, blob: blob, url: URL.createObjectURL(blob) });
+      }).catch(function () { /* un format en echec n'empeche pas les autres */ });
+    });
+  });
+
+  chaine.then(function () {
+    afficherListeFichiers(prets);
+    let i = 0;
+    (function suivant() {
+      if (i >= prets.length) {
+        try { localStorage.removeItem(LS_PENDING_REQUEST); } catch (e) {}
+        if (typeof onDone === 'function') onDone(prets.length === fichiers.length);
+        return;
+      }
+      const p = prets[i++];
+      const a = document.createElement('a');
+      a.href = p.url; a.download = p.f.nom; a.style.display = 'none';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(suivant, 800);
+    })();
+  });
+}
+
+// Liste cliquable : si le navigateur bloque un telechargement automatique,
+// le client recupere ses fichiers manuellement sans relancer d'analyse.
+function afficherListeFichiers(prets) {
+  const el = document.getElementById('files-list');
+  if (!el) return;
+  el.innerHTML = '<p style="font-size:12.5px;color:var(--muted);margin:0 0 8px;font-weight:600;">' +
+    t().filesTitle + '</p>' +
+    prets.map(function (p) {
+      return '<a href="' + p.url + '" download="' + p.f.nom + '">' +
+        t()[p.f.cle] + '<span>' + t().fileHint + '</span></a>';
+    }).join('');
+  el.classList.add('show');
 }
 
 /* ===================================================================
@@ -1153,6 +1245,7 @@ if (!paidPlanFromUrl || sameTabResume) {
         freelance_name: name,
         contact_email: email,
         plan: selectedPlan,
+        ui_lang: currentLang,
         cv_filename: file.name,
         cv_base64: cv_base64,
         job_title: jobTitle,
@@ -1181,6 +1274,9 @@ if (!paidPlanFromUrl || sameTabResume) {
     document.getElementById('result-meta').textContent = t().readyMeta;
     document.getElementById('payment-area').classList.remove('show');
     document.getElementById('reveal-payment-btn').style.display = '';
+    // Tant que le paiement n'est pas revenu, le bouton de lancement reste cache.
+    document.getElementById('confirm-paid-btn').style.display = 'none';
+    document.getElementById('files-list').classList.remove('show');
     showStep('result');
   });
 
@@ -1203,14 +1299,18 @@ if (!paidPlanFromUrl || sameTabResume) {
     analyseEnCours = true;
     if (paymentPollInterval) { clearInterval(paymentPollInterval); paymentPollInterval = null; }
     waitingNote.className = 'result-note show pending';
-    waitingNote.innerHTML = '<span class="spinner"></span>' + t().analysisRunning;
+    waitingNote.textContent = t().prgLong;
     document.getElementById('reveal-payment-btn').style.display = 'none';
+    document.getElementById('confirm-paid-btn').classList.add('btn-disabled');
+    prgDemarrer();
 
     let res;
     try {
       res = await postWebhook(pendingRequest);
     } catch (err) {
       analyseEnCours = false;
+      prgArreter();
+      document.getElementById('confirm-paid-btn').classList.remove('btn-disabled');
       waitingNote.className = 'result-note show err';
       waitingNote.textContent = t().statusNetworkErr;
       afficherBoutonReessayer();
@@ -1220,8 +1320,10 @@ if (!paidPlanFromUrl || sameTabResume) {
     let data = {};
     try { data = await res.json(); } catch (e) { data = {}; }
 
-    if (!res.ok || data.success === false || !data.report_html) {
+    if (!res.ok || data.success === false || !data.report_html_fr) {
       analyseEnCours = false;
+      prgArreter();
+      document.getElementById('confirm-paid-btn').classList.remove('btn-disabled');
       waitingNote.className = 'result-note show err';
       waitingNote.textContent = data.message || t().statusServerErr;
       afficherBoutonReessayer();
@@ -1229,9 +1331,11 @@ if (!paidPlanFromUrl || sameTabResume) {
     }
 
     analyseEnCours = false;
+    prgEtapeFichiers();
 
     reportData = {
-      report_html: data.report_html,
+      report_html_fr: data.report_html_fr,
+      report_html_en: data.report_html_en,
       job_title: data.job_title || pendingRequest.job_title,
       plan: pendingRequest.plan,
       freelance_name: data.freelance_name || pendingRequest.freelance_name,
@@ -1259,6 +1363,7 @@ if (!paidPlanFromUrl || sameTabResume) {
       ? ' ' + data.jours_restants + t().subDaysLeft : '';
 
     triggerDownloads(function (docxOk) {
+      prgTerminer();
       waitingNote.className = 'result-note show ' + (docxOk ? 'ok' : 'err');
       waitingNote.textContent = (docxOk ? t().downloadDone : t().docxFailed) + restants;
     });
@@ -1275,6 +1380,83 @@ if (!paidPlanFromUrl || sameTabResume) {
     btn.addEventListener('click', function () { lancerAnalyse(); });
   }
 
+
+  /* ==================================================================
+     BARRE DE PROGRESSION
+     L'analyse tient en un seul appel : le serveur ne renvoie pas d'etat
+     intermediaire. La progression est donc une ESTIMATION calee sur les
+     durees reellement mesurees (80 a 150 s). Elle ne depasse jamais 90 %
+     tant que la reponse n'est pas arrivee, et ne ment donc jamais sur
+     l'achevement.
+     ================================================================== */
+  const PRG_ETAPES = ['prg1', 'prg2', 'prg3', 'prg4', 'prg5'];
+  let prgTimer = null, prgDebut = 0, prgEtape = 0, prgPlafond = 90;
+
+  function prgRendreEtapes() {
+    const el = document.getElementById('progress-steps');
+    el.innerHTML = PRG_ETAPES.map(function (k, i) {
+      const cls = i < prgEtape ? 'fait' : (i === prgEtape ? 'en-cours' : '');
+      const marque = i < prgEtape ? '&#10003;' : (i === prgEtape ? '&#9679;' : '&#9675;');
+      return '<div class="' + cls + '"><span class="dot">' + marque + '</span>' + t()[k] + '</div>';
+    }).join('');
+    document.getElementById('progress-step-label').textContent = t()[PRG_ETAPES[Math.min(prgEtape, 4)]];
+  }
+
+  function prgMaj(pct) {
+    const p = Math.max(0, Math.min(100, pct));
+    document.getElementById('progress-fill').style.width = p + '%';
+    document.getElementById('progress-pct').textContent = Math.round(p) + ' %';
+  }
+
+  function prgDemarrer() {
+    document.getElementById('progress-wrap').classList.add('show');
+    document.getElementById('progress-fill').classList.remove('done');
+    prgDebut = Date.now();
+    prgEtape = 0;
+    prgPlafond = 90;
+    prgRendreEtapes();
+    prgMaj(3);
+    if (prgTimer) clearInterval(prgTimer);
+    prgTimer = setInterval(function () {
+      const s = (Date.now() - prgDebut) / 1000;
+      // Courbe qui ralentit : atteint ~70 % a 60 s, plafonne a 90 %
+      const pct = Math.min(prgPlafond, 3 + prgPlafond * (1 - Math.exp(-s / 45)));
+      prgMaj(pct);
+      const etape = s < 4 ? 0 : (s < 12 ? 1 : 2);
+      if (etape !== prgEtape && prgEtape < 2) { prgEtape = etape; prgRendreEtapes(); }
+    }, 400);
+  }
+
+  function prgEtapeFichiers() {
+    prgEtape = 3; prgRendreEtapes(); prgMaj(93);
+  }
+
+  function prgTerminer() {
+    if (prgTimer) { clearInterval(prgTimer); prgTimer = null; }
+    prgEtape = 5; prgRendreEtapes();
+    prgMaj(100);
+    document.getElementById('progress-fill').classList.add('done');
+    document.getElementById('progress-step-label').textContent = t().prg5;
+  }
+
+  function prgArreter() {
+    if (prgTimer) { clearInterval(prgTimer); prgTimer = null; }
+    document.getElementById('progress-wrap').classList.remove('show');
+  }
+
+  /* ==================================================================
+     ETAT DU PAIEMENT : boutons
+     ================================================================== */
+  function activerApresPaiement() {
+    const payLink = document.getElementById('chariow-pay-link');
+    payLink.classList.add('btn-disabled');
+    payLink.setAttribute('aria-disabled', 'true');
+    payLink.textContent = '\u2713 ' + t().payDone;
+    const btn = document.getElementById('confirm-paid-btn');
+    btn.style.display = '';
+    btn.disabled = false;
+  }
+
   /* --- Paiement / telechargement --- */
   const waitingNote = document.getElementById('waiting-note');
 
@@ -1287,7 +1469,11 @@ if (!paidPlanFromUrl || sameTabResume) {
 
     try { localStorage.removeItem(key); } catch (e) {}
     if (paymentPollInterval) { clearInterval(paymentPollInterval); paymentPollInterval = null; }
-    lancerAnalyse();
+    // Le paiement est revenu : on grise le bouton de paiement et on active
+    // le lancement, que le client declenche lui-meme.
+    activerApresPaiement();
+    waitingNote.className = 'result-note show ok';
+    waitingNote.textContent = t().payDone;
   }
 
   window.addEventListener('storage', function (e) {
@@ -1297,8 +1483,8 @@ if (!paidPlanFromUrl || sameTabResume) {
   document.getElementById('reveal-payment-btn').addEventListener('click', function () {
     document.getElementById('chariow-pay-link').href = CHARIOW_LINKS[selectedPlan] || CHARIOW_LINKS.tache;
     document.getElementById('payment-area').classList.add('show');
-    waitingNote.className = 'result-note';
-    waitingNote.textContent = '';
+    waitingNote.className = 'result-note show pending';
+    waitingNote.textContent = t().payFirst;
 
     // La redirection automatique Chariow reste geree ici si jamais elle
     // redevient disponible (Chariow empeche actuellement d'activer a la
@@ -1315,7 +1501,7 @@ if (!paidPlanFromUrl || sameTabResume) {
   // controle reellement le paiement auprès de Chariow avant d'analyser.
   document.getElementById('confirm-paid-btn').addEventListener('click', function () {
     if (analyseEnCours) return;
-    if (reportData) { triggerDownloads(function () {}); return; }
+    if (reportData) { triggerDownloads(function () { prgTerminer(); }); return; }
     lancerAnalyse();
   });
 
@@ -1330,7 +1516,9 @@ if (!paidPlanFromUrl || sameTabResume) {
     document.getElementById('payment-area').classList.add('show');
     document.getElementById('chariow-pay-link').href = CHARIOW_LINKS[selectedPlan] || CHARIOW_LINKS.tache;
     showStep('result');
-    lancerAnalyse();
+    activerApresPaiement();
+    waitingNote.className = 'result-note show ok';
+    waitingNote.textContent = t().payDone;
   }
 
   applyLanguage(currentLang);
